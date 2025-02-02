@@ -6,7 +6,7 @@ package proyecto.sistemasoperativos;
 
 /**
  *
- * @author gianf
+ * @author gianf y alejandra
  */
 public class ProyectoSistemasOperativos {
 
