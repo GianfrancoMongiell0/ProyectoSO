@@ -4,6 +4,8 @@
  */
 package Clases;
 
+import Estructuras.Lista;
+
 /**
  *
  * @author gianf y alejandra
@@ -14,7 +16,16 @@ public class ProyectoSistemasOperativos {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+    
+        Lista lista1 = new Lista();
+        lista1.insertFirst("hola");
+        lista1.insertFirst("hola");
+        lista1.insertFirst("hola");
+        lista1.insertFirst("hola");
+        lista1.insertFirst("hola");
+        lista1.insertFirst("hola");
+        lista1.insertFirst("hola");
+        lista1.imprimir();
     }
     
 }
