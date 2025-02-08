@@ -17,15 +17,7 @@ public class ProyectoSistemasOperativos {
      */
     public static void main(String[] args) {
     
-        Lista lista1 = new Lista();
-        lista1.insertFirst("hola");
-        lista1.insertFirst("hola");
-        lista1.insertFirst("hola");
-        lista1.insertFirst("hola");
-        lista1.insertFirst("hola");
-        lista1.insertFirst("hola");
-        lista1.insertFirst("hola");
-        lista1.imprimir();
+
     }
     
 }
