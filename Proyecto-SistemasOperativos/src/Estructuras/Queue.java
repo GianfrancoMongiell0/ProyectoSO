@@ -9,58 +9,92 @@ package Estructuras;
  * @author LENOVO
  * @param <T>
  */
-public class Queue <T>{
-    private Lista<T> list;
+public class Queue<T> {
+    private Nodo<T> first; 
+    private Nodo<T> last;  
+    private int length;    
+
     public Queue() {
-        this.list = new Lista<>();
+        this.first = null;
+        this.last = null;
+        this.length = 0;
     }
 
     /**
-     * Agrega un elemento al final de la cola (enqueue)
-     * @param data el elemento a agregar
+     * Verifica si la cola está vacía.
+     * @return true si está vacía, false en caso contrario.
+     */
+    public boolean isEmpty() {
+        return length == 0;
+    }
+
+    /**
+     * Retorna el tamaño de la cola.
+     * @return Número de elementos en la cola.
+     */
+    public int getLength() {
+        return length;
+    }
+
+    /**
+     * Inserta un elemento al final de la cola 
+     * @param data El dato que se va a agregar.
      */
     public void enqueue(T data) {
-        list.insertLast(data);
+        Nodo<T> nuevoNodo = new Nodo<>(data);
+        if (isEmpty()) {
+            first = nuevoNodo;
+            last = nuevoNodo;
+        } else {
+            last.setNext(nuevoNodo);
+            last = nuevoNodo;
+        }
+        length++;
     }
 
     /**
-     * Elimina y retorna el primer elemento de la cola (dequeue)
-     * @return el primer elemento de la cola
+     * Elimina y retorna el elemento del frente de la cola 
+     * @return El dato eliminado o null si la cola está vacía.
      */
     public T dequeue() {
         if (isEmpty()) {
-            throw new IllegalStateException("La cola está vacía.");
+            System.out.println("La cola está vacía.");
+            return null;
         }
-        T data = list.get(0);
-        list.deleteFirst();
+        T data = first.getData();
+        first = first.getNext();
+        length--;
+        if (length == 0) { // Si la cola quedó vacía, reiniciar last a null
+            last = null;
+        }
         return data;
     }
 
     /**
-     * Retorna el primer elemento de la cola sin eliminarlo (peek)
-     * @return el primer elemento de la cola
+     * Retorna el elemento del frente sin eliminarlo (peek).
+     * @return El dato en el frente de la cola o null si la cola está vacía.
      */
     public T peek() {
         if (isEmpty()) {
-            throw new IllegalStateException("La cola está vacía.");
+            System.out.println("La cola está vacía.");
+            return null;
         }
-        return list.get(0);
+        return first.getData();
     }
 
     /**
-     * Verifica si la cola está vacía
-     * @return true si está vacía, false en caso contrario
+     * Imprime los elementos de la cola.
      */
-    public boolean isEmpty() {
-        return list.isEmpty();
-    }
-
-    /**
-     * Retorna el tamaño de la cola
-     * @return número de elementos en la cola
-     */
-    public int size() {
-        return list.getLength();
+    public void imprimir() {
+        if (isEmpty()) {
+            System.out.println("La cola está vacía.");
+            return;
+        }
+        Nodo<T> actual = first;
+        while (actual != null) {
+            System.out.print(actual.getData() + " -> ");
+            actual = actual.getNext();
+        }
+        System.out.println("NULL");
     }
 }
-
