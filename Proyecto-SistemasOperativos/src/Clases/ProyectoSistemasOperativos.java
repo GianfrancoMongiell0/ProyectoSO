@@ -4,7 +4,7 @@
  */
 package Clases;
 
-import Estructuras.Lista;
+import Utils.LectorEscritorTxt;
 
 /**
  *
@@ -16,8 +16,13 @@ public class ProyectoSistemasOperativos {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-    
-
+        String ruta = "C:/Users/gianf/Desktop/PruebaJava.txt";
+        Proceso proceso1 = new Proceso("Proceso 1", 20);
+        
+        
+        LectorEscritorTxt lector = new LectorEscritorTxt();
+        lector.escribirArchivo(ruta,"Hola", false);
+        lector.leerArchivo(ruta);
     }
     
 }
