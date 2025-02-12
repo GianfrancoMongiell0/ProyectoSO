@@ -29,6 +29,7 @@ public class Proceso {
         this.instruccionesRestantes = totalInstrucciones;
     }
 
+ 
     // Método para ejecutar una instrucción (simulación)
     public void ejecutarInstruccion() {
         if (!terminado) {
@@ -41,15 +42,24 @@ public class Proceso {
                 terminado = true;
 
             }
-            System.out.println(terminado);
+            System.out.println(instruccionesRestantes);
         }
     }
 
+     // Método para verificar si el proceso debe bloquearse
+    public boolean debeBloquearse() {
+        return pcb.debeBloquearse();
+    }
+    
     // Getters
     public PCB getPCB() {
         return pcb;
     }
 
+    public int getTotalInstrucciones() {
+        return totalInstrucciones;
+    }
+    
     public int getInstruccionesRestantes() {
         return instruccionesRestantes;
     }
@@ -57,10 +67,12 @@ public class Proceso {
     public boolean estaTerminado() {
         return terminado;
     }
+    
+    
 
     @Override
     public String toString() {
-        return ("Proceso: " + pcb.toString() + ", Instrucciones restantes: " + instruccionesRestantes);
+        return ( pcb.toString() +"," +instruccionesRestantes);
     }
 
 }

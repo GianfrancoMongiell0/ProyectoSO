@@ -4,6 +4,7 @@
  */
 package Clases;
 
+import Interfaces.Simulador;
 import Utils.LectorEscritorTxt;
 
 /**
@@ -11,18 +12,23 @@ import Utils.LectorEscritorTxt;
  * @author gianf y alejandra
  */
 public class ProyectoSistemasOperativos {
-
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
-        String ruta = "C:/Users/gianf/Desktop/PruebaJava.txt";
+    
+    
+        String ruta = "C://Users/LENOVO/Desktop/Prueba.txt";
         Proceso proceso1 = new Proceso("Proceso 1", 20);
         
         
         LectorEscritorTxt lector = new LectorEscritorTxt();
         lector.escribirArchivo(ruta,"Hola", false);
         lector.leerArchivo(ruta);
-    }
+        
+            
+        Simulador simulador = new Simulador();
+        SistemaOperativo so = new SistemaOperativo(3, simulador);
     
+        simulador.setVisible(true);
+        so.iniciarCPU();
+    
+}
 }

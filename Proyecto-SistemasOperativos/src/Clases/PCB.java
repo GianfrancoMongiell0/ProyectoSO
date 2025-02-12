@@ -20,7 +20,8 @@ public class PCB {
     private final boolean esIOBound;
     private int ciclosExcepcion; // Ciclos para generar excepción (solo I/O bound)
     private int ciclosCompletarExcepcion; // Ciclos para resolver excepción (solo I/O bound)
-
+    private int ciclosEjecutadosDesdeUltimoBloqueo = 0; // Contador de ciclos ejecutados
+    
     // Constructor (para CPU-bound)
     public PCB(String nombre) {
         this.id = contadorID++;
@@ -84,8 +85,24 @@ public class PCB {
         return ciclosCompletarExcepcion;
     }
 
+    public String getNombre() {
+        return nombre;
+    }
+    
+     // Método para verificar si el proceso debe bloquearse
+    public boolean debeBloquearse() {
+        if (esIOBound) {
+            ciclosEjecutadosDesdeUltimoBloqueo++;
+            if (ciclosEjecutadosDesdeUltimoBloqueo >= ciclosExcepcion) {
+                ciclosEjecutadosDesdeUltimoBloqueo = 0; // Reiniciar contador
+                return true;
+            }
+        }
+        return false;
+    }  
+    
     @Override
     public String toString() {
-        return "PCB [ID=" + id + ", Nombre=" + nombre + ", Estado=" + estado + ", PC=" + pc + ", MAR=" + mar + "]";
+        return  id + "," + nombre + "," + estado + "," + pc + "," + mar ;
     }
 }

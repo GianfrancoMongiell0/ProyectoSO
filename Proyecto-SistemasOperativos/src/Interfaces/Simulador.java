@@ -4,19 +4,81 @@
  */
 package Interfaces;
 
+import Clases.Proceso;
+import Estructuras.Lista;
+import Estructuras.Nodo;
+import Estructuras.Queue;
+import Utils.LectorEscritorTxt;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author LENOVO
  */
 public class Simulador extends javax.swing.JFrame {
+    String rutaArchivo = "C://Users/LENOVO/Desktop/Prueba.txt";
+    LectorEscritorTxt lector = new LectorEscritorTxt();
+    private Queue<Proceso> colaListos = new Queue<>();
+    private Queue<Proceso> colaBloqueados = new Queue<>();
+    private Queue<Proceso> colaTerminados = new Queue<>();
 
-    /**
-     * Creates new form Simulador
-     */
+    private DefaultTableModel modeloTablaListos = new DefaultTableModel(
+        new Object[][]{}, new String[]{"Id", "Nombre", "Estado", "PC", "MAR"}
+    );
+
+    private DefaultTableModel modeloTablaBloqueados = new DefaultTableModel(
+        new Object[][]{}, new String[]{"Id", "Nombre", "Estado", "PC", "MAR"}
+    );
+
+    private DefaultTableModel modeloTablaTerminados = new DefaultTableModel(
+        new Object[][]{}, new String[]{"Id", "Nombre", "Estado", "PC", "MAR"}
+    );
+
     public Simulador() {
         initComponents();
+        ColaListos.setModel(modeloTablaListos);
+        ColaBloqueados.setModel(modeloTablaBloqueados);
+        ColaTerminados.setModel(modeloTablaTerminados);
     }
 
+    public void agregarProceso(Proceso proceso) {
+        colaListos.enqueue(proceso);
+        actualizarTablas();
+    }
+
+    public void actualizarTablas() {
+        actualizarTabla(colaListos, modeloTablaListos);
+        actualizarTabla(colaBloqueados, modeloTablaBloqueados);
+        actualizarTabla(colaTerminados, modeloTablaTerminados);
+    }
+
+    private void actualizarTabla(Queue<Proceso> cola, DefaultTableModel modelo) {
+        modelo.setRowCount(0);
+        Queue<Proceso> copiaCola = new Queue<>();
+
+        while (!cola.isEmpty()) {
+            Proceso proceso = cola.dequeue();
+            copiaCola.enqueue(proceso);
+            Object[] fila = {
+                proceso.getPCB().getId(),
+                proceso.getPCB().getNombre(),
+                proceso.getPCB().getEstado(),
+                proceso.getPCB().getPc(),
+                proceso.getPCB().getMar()
+            };
+            modelo.addRow(fila);
+        }
+
+        while (!copiaCola.isEmpty()) {
+            cola.enqueue(copiaCola.dequeue());
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -68,7 +130,7 @@ public class Simulador extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jScrollPane5 = new javax.swing.JScrollPane();
-        ProcesosTerminados = new javax.swing.JTable();
+        ColaTerminados = new javax.swing.JTable();
         PClabel = new javax.swing.JLabel();
         valorPC = new javax.swing.JLabel();
         algoritmoPlan = new javax.swing.JLabel();
@@ -129,6 +191,11 @@ public class Simulador extends javax.swing.JFrame {
         jLabel15.setText("Cant. ciclos para generar ");
 
         nombreProceso.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        nombreProceso.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nombreProcesoActionPerformed(evt);
+            }
+        });
 
         cantInstrucciones.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         cantInstrucciones.addActionListener(new java.awt.event.ActionListener() {
@@ -410,9 +477,9 @@ public class Simulador extends javax.swing.JFrame {
         ColaListos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
+                {"", null, null, null, null},
                 {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {"", null, null, null, null}
             },
             new String [] {
                 "Id", "Nombre", "Status", "PC", "MAR"
@@ -449,8 +516,8 @@ public class Simulador extends javax.swing.JFrame {
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel7.setText("Procesos terminados");
 
-        ProcesosTerminados.setBackground(new java.awt.Color(122, 186, 143));
-        ProcesosTerminados.setModel(new javax.swing.table.DefaultTableModel(
+        ColaTerminados.setBackground(new java.awt.Color(122, 186, 143));
+        ColaTerminados.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -461,7 +528,7 @@ public class Simulador extends javax.swing.JFrame {
                 "Id", "Nombre", "Status", "PC", "MAR"
             }
         ));
-        jScrollPane5.setViewportView(ProcesosTerminados);
+        jScrollPane5.setViewportView(ColaTerminados);
 
         PClabel.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         PClabel.setForeground(new java.awt.Color(255, 255, 255));
@@ -727,7 +794,7 @@ public class Simulador extends javax.swing.JFrame {
                             .addComponent(PClabel))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(valorCicloReloj, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
+                            .addComponent(valorCicloReloj, javax.swing.GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
                             .addComponent(valorPC, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addComponent(jScrollPane2)
                     .addComponent(jScrollPane4)
@@ -822,7 +889,31 @@ public class Simulador extends javax.swing.JFrame {
     }//GEN-LAST:event_algoritmoPlanificacionActionPerformed
 
     private void crearProcesoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearProcesoActionPerformed
-        // TODO add your handling code here:
+        String nombre = nombreProceso.getText();
+        
+        int instrucciones = Integer.parseInt(cantInstrucciones.getText());
+        String tipoProceso = (String) tipo.getSelectedItem();
+        
+    if (tipoProceso.equals("CPU bound")) {
+        Proceso proceso = new Proceso(nombre, instrucciones);
+        colaListos.enqueue(proceso);
+        System.out.println("Proceso creado y agregado a la cola de listos y es CPU bound." );
+        agregarProceso(proceso);
+        colaListos.imprimir();
+        lector.escribirArchivo(rutaArchivo,proceso.getPCB().getNombre()+","+proceso.getTotalInstrucciones()+
+                ","+proceso.getPCB().esIOBound()+","+proceso.getPCB().getCiclosExcepcion()+","+proceso.getPCB().getCiclosCompletarExcepcion() ,false);
+    } else {
+        int ciclosExcepcion = (int) cantCiclosGE.getValue();
+        int ciclosResolucion = (int) cantCiclosSE.getValue();
+        Proceso proceso = new Proceso(nombre, instrucciones, ciclosExcepcion, ciclosResolucion);
+        agregarProceso(proceso);
+        colaListos.enqueue(proceso);
+        System.out.println("Proceso creado y agregado a la cola de listos y es IO bound." + colaListos); 
+        lector.escribirArchivo(rutaArchivo,proceso.getPCB().getNombre()+","+proceso.getTotalInstrucciones()+
+                ","+proceso.getPCB().esIOBound()+","+proceso.getPCB().getCiclosExcepcion()+","+proceso.getPCB().getCiclosCompletarExcepcion() ,false);
+    }     
+    
+        
     }//GEN-LAST:event_crearProcesoActionPerformed
 
     private void cantInstruccionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cantInstruccionesActionPerformed
@@ -830,12 +921,41 @@ public class Simulador extends javax.swing.JFrame {
     }//GEN-LAST:event_cantInstruccionesActionPerformed
 
     private void cargarProcesoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargarProcesoActionPerformed
-        // TODO add your handling code here:
+    
+    try (BufferedReader br = new BufferedReader(new FileReader(rutaArchivo))) {
+        String linea;
+        while ((linea = br.readLine()) != null) {
+            String[] datos = linea.split(",");
+            String nombre = datos[0];
+            int instrucciones = Integer.parseInt(datos[1]);
+            String tipo = datos[2];
+
+            if (tipo.equals(false)) {
+                Proceso proceso = new Proceso(nombre, instrucciones);
+                colaListos.enqueue(proceso);
+                System.out.println("Procesos cargados desde el archivo."+ proceso);
+            } else {
+                int ciclosExcepcion = Integer.parseInt(datos[3]);
+                int ciclosResolucion = Integer.parseInt(datos[4]);
+                Proceso proceso = new Proceso(nombre, instrucciones, ciclosExcepcion, ciclosResolucion);
+                colaListos.enqueue(proceso);
+                 System.out.println("Procesos cargados desde el archivo."+ proceso);
+            }
+        }
+        System.out.println("Procesos cargados desde el archivo.");
+    } catch (IOException ex) {
+        System.out.println("Error al leer el archivo: " + ex.getMessage());
+    }
+
     }//GEN-LAST:event_cargarProcesoActionPerformed
 
     private void tipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_tipoActionPerformed
+
+    private void nombreProcesoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nombreProcesoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nombreProcesoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -875,8 +995,8 @@ public class Simulador extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable ColaBloqueados;
     private javax.swing.JTable ColaListos;
+    private javax.swing.JTable ColaTerminados;
     private javax.swing.JLabel PClabel;
-    private javax.swing.JTable ProcesosTerminados;
     private javax.swing.JLabel algoritmoPlan;
     private javax.swing.JComboBox<String> algoritmoPlanificacion;
     private javax.swing.JButton botonSaveconfig;
