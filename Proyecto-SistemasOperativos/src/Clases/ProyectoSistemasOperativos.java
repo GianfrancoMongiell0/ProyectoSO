@@ -6,29 +6,31 @@ package Clases;
 
 import Interfaces.Simulador;
 import Utils.LectorEscritorTxt;
+import planificacion.FCFS;
+import planificacion.Planificador;
 
 /**
  *
  * @author gianf y alejandra
  */
 public class ProyectoSistemasOperativos {
+
     public static void main(String[] args) {
-    
-    
-        String ruta = "C://Users/LENOVO/Desktop/Prueba.txt";
-        Proceso proceso1 = new Proceso("Proceso 1", 20);
-        
-        
-        LectorEscritorTxt lector = new LectorEscritorTxt();
-        lector.escribirArchivo(ruta,"Hola", false);
-        lector.leerArchivo(ruta);
-        
-            
+
+        //String ruta = "C:/Users/gianf/Desktop/PruebaJava.txt";
+        //Proceso proceso1 = new Proceso("Proceso 1", 20);
+        //LectorEscritorTxt lector = new LectorEscritorTxt();
+        //lector.escribirArchivo(ruta, "Hola", false);
+        //lector.leerArchivo(ruta);
+        Planificador plan = new FCFS();
         Simulador simulador = new Simulador();
-        SistemaOperativo so = new SistemaOperativo(3, simulador);
-    
+        SistemaOperativo so = new SistemaOperativo(plan, simulador);
+
         simulador.setVisible(true);
-        so.iniciarCPU();
-    
-}
+        /*so.iniciarCPU();
+        
+        Aqui hay que hacerlo desde la interfaz
+        */
+
+    }
 }

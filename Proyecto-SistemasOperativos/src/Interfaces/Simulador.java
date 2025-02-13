@@ -9,6 +9,7 @@ import Estructuras.Lista;
 import Estructuras.Nodo;
 import Estructuras.Queue;
 import Utils.LectorEscritorTxt;
+import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -21,22 +22,23 @@ import javax.swing.table.DefaultTableModel;
  * @author LENOVO
  */
 public class Simulador extends javax.swing.JFrame {
-    String rutaArchivo = "C://Users/LENOVO/Desktop/Prueba.txt";
+
+    String rutaArchivo = "C:/Users/gianf/Desktop/PruebaJava.txt";
     LectorEscritorTxt lector = new LectorEscritorTxt();
     private Queue<Proceso> colaListos = new Queue<>();
     private Queue<Proceso> colaBloqueados = new Queue<>();
     private Queue<Proceso> colaTerminados = new Queue<>();
 
     private DefaultTableModel modeloTablaListos = new DefaultTableModel(
-        new Object[][]{}, new String[]{"Id", "Nombre", "Estado", "PC", "MAR"}
+            new Object[][]{}, new String[]{"Id", "Nombre", "Estado", "PC", "MAR"}
     );
 
     private DefaultTableModel modeloTablaBloqueados = new DefaultTableModel(
-        new Object[][]{}, new String[]{"Id", "Nombre", "Estado", "PC", "MAR"}
+            new Object[][]{}, new String[]{"Id", "Nombre", "Estado", "PC", "MAR"}
     );
 
     private DefaultTableModel modeloTablaTerminados = new DefaultTableModel(
-        new Object[][]{}, new String[]{"Id", "Nombre", "Estado", "PC", "MAR"}
+            new Object[][]{}, new String[]{"Id", "Nombre", "Estado", "PC", "MAR"}
     );
 
     public Simulador() {
@@ -78,7 +80,7 @@ public class Simulador extends javax.swing.JFrame {
             cola.enqueue(copiaCola.dequeue());
         }
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -203,6 +205,11 @@ public class Simulador extends javax.swing.JFrame {
                 cantInstruccionesActionPerformed(evt);
             }
         });
+        cantInstrucciones.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                cantInstruccionesKeyTyped(evt);
+            }
+        });
 
         jLabel16.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         jLabel16.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -225,8 +232,10 @@ public class Simulador extends javax.swing.JFrame {
         });
 
         cantCiclosSE.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        cantCiclosSE.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
 
         cantCiclosGE.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        cantCiclosGE.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
 
         crearProceso.setBackground(new java.awt.Color(0, 153, 102));
         crearProceso.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
@@ -890,30 +899,30 @@ public class Simulador extends javax.swing.JFrame {
 
     private void crearProcesoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearProcesoActionPerformed
         String nombre = nombreProceso.getText();
-        
+
         int instrucciones = Integer.parseInt(cantInstrucciones.getText());
         String tipoProceso = (String) tipo.getSelectedItem();
-        
-    if (tipoProceso.equals("CPU bound")) {
-        Proceso proceso = new Proceso(nombre, instrucciones);
-        colaListos.enqueue(proceso);
-        System.out.println("Proceso creado y agregado a la cola de listos y es CPU bound." );
-        agregarProceso(proceso);
-        colaListos.imprimir();
-        lector.escribirArchivo(rutaArchivo,proceso.getPCB().getNombre()+","+proceso.getTotalInstrucciones()+
-                ","+proceso.getPCB().esIOBound()+","+proceso.getPCB().getCiclosExcepcion()+","+proceso.getPCB().getCiclosCompletarExcepcion() ,false);
-    } else {
-        int ciclosExcepcion = (int) cantCiclosGE.getValue();
-        int ciclosResolucion = (int) cantCiclosSE.getValue();
-        Proceso proceso = new Proceso(nombre, instrucciones, ciclosExcepcion, ciclosResolucion);
-        agregarProceso(proceso);
-        colaListos.enqueue(proceso);
-        System.out.println("Proceso creado y agregado a la cola de listos y es IO bound." + colaListos); 
-        lector.escribirArchivo(rutaArchivo,proceso.getPCB().getNombre()+","+proceso.getTotalInstrucciones()+
-                ","+proceso.getPCB().esIOBound()+","+proceso.getPCB().getCiclosExcepcion()+","+proceso.getPCB().getCiclosCompletarExcepcion() ,false);
-    }     
-    
-        
+
+        if (tipoProceso.equals("CPU bound")) {
+            Proceso proceso = new Proceso(nombre, instrucciones);
+            colaListos.enqueue(proceso);
+            System.out.println("Proceso creado y agregado a la cola de listos y es CPU bound.");
+            agregarProceso(proceso);
+            colaListos.imprimir();
+            lector.escribirArchivo(rutaArchivo, proceso.getPCB().getNombre() + "," + proceso.getTotalInstrucciones()
+                    + "," + proceso.getPCB().esIOBound() + "," + proceso.getPCB().getCiclosExcepcion() + "," + proceso.getPCB().getCiclosCompletarExcepcion(), true);
+        } else {
+            int ciclosExcepcion = (int) cantCiclosGE.getValue();
+            int ciclosResolucion = (int) cantCiclosSE.getValue();
+            Proceso proceso = new Proceso(nombre, instrucciones, ciclosExcepcion, ciclosResolucion);
+            agregarProceso(proceso);
+            colaListos.enqueue(proceso);
+            System.out.println("Proceso creado y agregado a la cola de listos y es IO bound." + colaListos);
+            lector.escribirArchivo(rutaArchivo, proceso.getPCB().getNombre() + "," + proceso.getTotalInstrucciones()
+                    + "," + proceso.getPCB().esIOBound() + "," + proceso.getPCB().getCiclosExcepcion() + "," + proceso.getPCB().getCiclosCompletarExcepcion(), true);
+        }
+
+
     }//GEN-LAST:event_crearProcesoActionPerformed
 
     private void cantInstruccionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cantInstruccionesActionPerformed
@@ -921,31 +930,31 @@ public class Simulador extends javax.swing.JFrame {
     }//GEN-LAST:event_cantInstruccionesActionPerformed
 
     private void cargarProcesoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargarProcesoActionPerformed
-    
-    try (BufferedReader br = new BufferedReader(new FileReader(rutaArchivo))) {
-        String linea;
-        while ((linea = br.readLine()) != null) {
-            String[] datos = linea.split(",");
-            String nombre = datos[0];
-            int instrucciones = Integer.parseInt(datos[1]);
-            String tipo = datos[2];
 
-            if (tipo.equals(false)) {
-                Proceso proceso = new Proceso(nombre, instrucciones);
-                colaListos.enqueue(proceso);
-                System.out.println("Procesos cargados desde el archivo."+ proceso);
-            } else {
-                int ciclosExcepcion = Integer.parseInt(datos[3]);
-                int ciclosResolucion = Integer.parseInt(datos[4]);
-                Proceso proceso = new Proceso(nombre, instrucciones, ciclosExcepcion, ciclosResolucion);
-                colaListos.enqueue(proceso);
-                 System.out.println("Procesos cargados desde el archivo."+ proceso);
+        try (BufferedReader br = new BufferedReader(new FileReader(rutaArchivo))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                String[] datos = linea.split(",");
+                String nombre = datos[0];
+                int instrucciones = Integer.parseInt(datos[1]);
+                String tipo = datos[2];
+
+                if (tipo.equals(false)) {
+                    Proceso proceso = new Proceso(nombre, instrucciones);
+                    colaListos.enqueue(proceso);
+                    System.out.println("Procesos cargados desde el archivo." + proceso);
+                } else {
+                    int ciclosExcepcion = Integer.parseInt(datos[3]);
+                    int ciclosResolucion = Integer.parseInt(datos[4]);
+                    Proceso proceso = new Proceso(nombre, instrucciones, ciclosExcepcion, ciclosResolucion);
+                    colaListos.enqueue(proceso);
+                    System.out.println("Procesos cargados desde el archivo." + proceso);
+                }
             }
+            System.out.println("Procesos cargados desde el archivo.");
+        } catch (IOException ex) {
+            System.out.println("Error al leer el archivo: " + ex.getMessage());
         }
-        System.out.println("Procesos cargados desde el archivo.");
-    } catch (IOException ex) {
-        System.out.println("Error al leer el archivo: " + ex.getMessage());
-    }
 
     }//GEN-LAST:event_cargarProcesoActionPerformed
 
@@ -956,6 +965,14 @@ public class Simulador extends javax.swing.JFrame {
     private void nombreProcesoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nombreProcesoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_nombreProcesoActionPerformed
+
+    private void cantInstruccionesKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cantInstruccionesKeyTyped
+        int key = evt.getKeyChar();
+        boolean numero = key >= 48 && key <= 57;
+        if (!numero) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_cantInstruccionesKeyTyped
 
     /**
      * @param args the command line arguments

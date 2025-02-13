@@ -6,65 +6,78 @@ package Clases;
 
 import Estructuras.Queue;
 import Interfaces.Simulador;
+import planificacion.Planificador;
 
 /**
  *
  * @author LENOVO
  */
 public class SistemaOperativo {
-    private Queue<Proceso> colaListos;
+
+    private Planificador planificador; // Planificador activo (FCFS, RoundRobin, etc.)
     private Queue<Proceso> colaBloqueados;
     private Queue<Proceso> colaTerminados;
-    private CPU cpu;
     private boolean enEjecucion;
     private Simulador simulador;
 
-    public SistemaOperativo(int quantum, Simulador simulador) {
-        this.colaListos = new Queue<>();
+    public SistemaOperativo(Planificador planificador, Simulador simulador) {
+        this.planificador = planificador;
         this.colaBloqueados = new Queue<>();
         this.colaTerminados = new Queue<>();
-        this.cpu = new CPU(this, quantum);
         this.enEjecucion = true;
         this.simulador = simulador;
     }
 
+    // Método para agregar procesos al planificador
     public void agregarProceso(Proceso proceso) {
-        colaListos.enqueue(proceso);
-        simulador.actualizarTablas();  // Actualizar la interfaz
+        planificador.agregarProceso(proceso);
+        simulador.actualizarTablas();
     }
 
-    public void iniciarCPU() {
-        cpu.start(); // Inicia el hilo de la CPU
-    }
-
+    // Método para obtener el próximo proceso (usado por CPUs)
     public synchronized Proceso obtenerSiguienteProceso() {
-        if (!colaListos.isEmpty()) {
-            return colaListos.dequeue();
-        }
-        return null;
+        return planificador.siguienteProceso();
     }
 
+    // Método para mover procesos a bloqueados
     public void moverAColaBloqueados(Proceso proceso) {
         proceso.getPCB().setEstado("Bloqueado");
         colaBloqueados.enqueue(proceso);
         simulador.actualizarTablas();
     }
 
+    // Método para mover procesos a terminados
     public void moverAColaTerminados(Proceso proceso) {
         proceso.getPCB().setEstado("Terminado");
         colaTerminados.enqueue(proceso);
         simulador.actualizarTablas();
     }
 
+    // Verificar si hay procesos pendientes
     public synchronized boolean hayProcesosPendientes() {
-        return !colaListos.isEmpty();
+        return !planificador.estaVacio() || !colaBloqueados.isEmpty();
     }
 
+    // Detener la ejecución
     public void detenerCPU() {
         enEjecucion = false;
     }
 
+    // Getters
     public boolean isEnEjecucion() {
         return enEjecucion;
     }
+
+    public Planificador getPlanificador() {
+        return planificador;
+    }
+
+    public Queue<Proceso> getColaBloqueados() {
+        return colaBloqueados;
+    }
+
+    public Queue<Proceso> getColaTerminados() {
+        return colaTerminados;
+    }
+
 }
