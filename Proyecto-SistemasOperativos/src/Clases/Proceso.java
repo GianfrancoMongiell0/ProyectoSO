@@ -1,57 +1,53 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Clases;
 
-/**
- *
- * @author gianf
- */
 public class Proceso {
 
     private final PCB pcb;
     private final int totalInstrucciones;
     private int instruccionesRestantes;
-    private boolean terminado = false;
+    private volatile boolean terminado = false;
 
-    // Constructor para CPU-bound
+    // Constructor para procesos CPU-bound
     public Proceso(String nombre, int totalInstrucciones) {
         this.pcb = new PCB(nombre);
         this.totalInstrucciones = totalInstrucciones;
         this.instruccionesRestantes = totalInstrucciones;
     }
 
-    // Constructor para I/O bound
-    public Proceso(String nombre, int totalInstrucciones, int ciclosExcepcion, int ciclosCompletarExcepcion) {
+    // Constructor para procesos I/O-bound
+    public Proceso(String nombre, int totalInstrucciones,
+            int ciclosExcepcion, int ciclosCompletarExcepcion) {
         this.pcb = new PCB(nombre, ciclosExcepcion, ciclosCompletarExcepcion);
         this.totalInstrucciones = totalInstrucciones;
         this.instruccionesRestantes = totalInstrucciones;
     }
 
- 
-    // Método para ejecutar una instrucción (simulación)
-    public void ejecutarInstruccion() {
+    /**
+     * Ejecuta una instrucción del proceso. Método sincronizado para evitar
+     * condiciones de carrera.
+     */
+    public synchronized void ejecutarInstruccion() {
         if (!terminado) {
             pcb.incrementarPc();
             pcb.incrementarMar();
             instruccionesRestantes--;
 
-            if (instruccionesRestantes == 0) {
-                pcb.setEstado("Terminado");
+            if (instruccionesRestantes <= 0) {
+                pcb.setEstado(PCB.Estado.TERMINATED);
                 terminado = true;
-
             }
-            System.out.println(instruccionesRestantes);
         }
     }
 
-     // Método para verificar si el proceso debe bloquearse
+    /**
+     * Determina si el proceso debe bloquearse por una operación de E/S.
+     *
+     * @return true si debe bloquearse, false en caso contrario.
+     */
     public boolean debeBloquearse() {
         return pcb.debeBloquearse();
     }
-    
-    // Getters
+
     public PCB getPCB() {
         return pcb;
     }
@@ -59,7 +55,7 @@ public class Proceso {
     public int getTotalInstrucciones() {
         return totalInstrucciones;
     }
-    
+
     public int getInstruccionesRestantes() {
         return instruccionesRestantes;
     }
@@ -67,12 +63,12 @@ public class Proceso {
     public boolean estaTerminado() {
         return terminado;
     }
-    
-    
 
     @Override
     public String toString() {
-        return ( pcb.toString() +"," +instruccionesRestantes);
+        return String.format(
+                "%s | Instrucciones restantes: %d",
+                pcb.toString(), instruccionesRestantes
+        );
     }
-
 }

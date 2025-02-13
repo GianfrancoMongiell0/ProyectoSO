@@ -1,7 +1,7 @@
 package planificacion;
 
-import Estructuras.Lista;
 import Clases.Proceso;
+import Estructuras.Lista;
 import java.util.concurrent.Semaphore;
 
 public abstract class Planificador {
@@ -15,5 +15,4 @@ public abstract class Planificador {
     public abstract void agregarProceso(Proceso p);
 
     public abstract boolean estaVacio();
-
 }

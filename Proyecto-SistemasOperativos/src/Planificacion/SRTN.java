@@ -14,20 +14,16 @@ public class SRTN extends Planificador {
                 return null;
             }
 
-            // Buscar proceso con menos instrucciones restantes
-            int minInstrucciones = Integer.MAX_VALUE;
-            int indexToRemove = -1;
-
-            for (int i = 0; i < colaListos.getLength(); i++) {
-                Proceso p = colaListos.get(i);
-                if (p.getInstruccionesRestantes() < minInstrucciones) {
-                    minInstrucciones = p.getInstruccionesRestantes();
-                    indexToRemove = i;
+            int minIndex = 0;
+            for (int i = 1; i < colaListos.getLength(); i++) {
+                if (colaListos.get(i).getInstruccionesRestantes()
+                        < colaListos.get(minIndex).getInstruccionesRestantes()) {
+                    minIndex = i;
                 }
             }
 
-            Proceso seleccionado = colaListos.get(indexToRemove);
-            colaListos.deleteIndex(indexToRemove);
+            Proceso seleccionado = colaListos.get(minIndex);
+            colaListos.deleteIndex(minIndex);
             return seleccionado;
 
         } catch (InterruptedException e) {
@@ -42,13 +38,7 @@ public class SRTN extends Planificador {
     public void agregarProceso(Proceso p) {
         try {
             mutex.acquire();
-            // Insertar manteniendo orden ascendente de instrucciones restantes
-            int index = 0;
-            while (index < colaListos.getLength()
-                    && colaListos.get(index).getInstruccionesRestantes() < p.getInstruccionesRestantes()) {
-                index++;
-            }
-            colaListos.insertIndex(index, p);
+            colaListos.insertLast(p);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {

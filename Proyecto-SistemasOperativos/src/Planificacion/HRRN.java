@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package planificacion;
 
 import Clases.Proceso;
@@ -20,26 +16,20 @@ public class HRRN extends Planificador {
                 return null;
             }
 
-            // Calcular Response Ratio para todos los procesos
-            Proceso seleccionado = null;
             double maxRatio = -1;
-            int indexToRemove = -1;
-
+            int maxIndex = 0;
             for (int i = 0; i < colaListos.getLength(); i++) {
                 Proceso p = colaListos.get(i);
                 double ratio = calcularResponseRatio(p);
-
                 if (ratio > maxRatio) {
                     maxRatio = ratio;
-                    seleccionado = p;
-                    indexToRemove = i;
+                    maxIndex = i;
                 }
             }
 
-            if (seleccionado != null) {
-                colaListos.deleteIndex(indexToRemove);
-                tiempoGlobal += seleccionado.getInstruccionesRestantes();
-            }
+            Proceso seleccionado = colaListos.get(maxIndex);
+            colaListos.deleteIndex(maxIndex);
+            tiempoGlobal += seleccionado.getInstruccionesRestantes();
             return seleccionado;
 
         } catch (InterruptedException e) {
@@ -54,8 +44,8 @@ public class HRRN extends Planificador {
     public void agregarProceso(Proceso p) {
         try {
             mutex.acquire();
+            p.getPCB().setTiempoLlegada(tiempoGlobal);
             colaListos.insertLast(p);
-            p.getPCB().setTiempoLlegada(tiempoGlobal); // Registrar tiempo de llegada
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {
@@ -73,5 +63,4 @@ public class HRRN extends Planificador {
     public boolean estaVacio() {
         return colaListos.isEmpty();
     }
-
 }

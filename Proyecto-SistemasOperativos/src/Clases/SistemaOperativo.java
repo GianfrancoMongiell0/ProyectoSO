@@ -1,83 +1,85 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Clases;
 
+import Estructuras.Lista;
 import Estructuras.Queue;
-import Interfaces.Simulador;
 import planificacion.Planificador;
 
-/**
- *
- * @author LENOVO
- */
 public class SistemaOperativo {
 
-    private Planificador planificador; // Planificador activo (FCFS, RoundRobin, etc.)
-    private Queue<Proceso> colaBloqueados;
-    private Queue<Proceso> colaTerminados;
-    private boolean enEjecucion;
-    private Simulador simulador;
+    private final Planificador planificador;
+    private final Queue<Proceso> colaBloqueados;
+    private final Queue<Proceso> colaTerminados;
+    private final Lista<CPU> cpus;
+    private volatile boolean enEjecucion; // volatile para visibilidad entre hilos
+    private int duracionCiclo = 1000;
 
-    public SistemaOperativo(Planificador planificador, Simulador simulador) {
+    public SistemaOperativo(Planificador planificador, int numCPUs) {
         this.planificador = planificador;
         this.colaBloqueados = new Queue<>();
         this.colaTerminados = new Queue<>();
+        this.cpus = new Lista<>();
         this.enEjecucion = true;
-        this.simulador = simulador;
+
+        for (int i = 0; i < numCPUs; i++) {
+            cpus.insertLast(new CPU(this, i + 1));
+        }
     }
 
-    // Método para agregar procesos al planificador
-    public void agregarProceso(Proceso proceso) {
-        planificador.agregarProceso(proceso);
-        simulador.actualizarTablas();
+    // Métodos sincronizados
+    public synchronized void agregarProceso(Proceso proceso) {
+        if (!proceso.estaTerminado() && !proceso.debeBloquearse()) {
+            planificador.agregarProceso(proceso);
+        }
     }
 
-    // Método para obtener el próximo proceso (usado por CPUs)
     public synchronized Proceso obtenerSiguienteProceso() {
         return planificador.siguienteProceso();
     }
 
-    // Método para mover procesos a bloqueados
-    public void moverAColaBloqueados(Proceso proceso) {
-        proceso.getPCB().setEstado("Bloqueado");
+    public synchronized void moverAColaBloqueados(Proceso proceso) {
+        proceso.getPCB().setEstado(PCB.Estado.BLOCKED);
         colaBloqueados.enqueue(proceso);
-        simulador.actualizarTablas();
+        new Thread(() -> manejarDesbloqueo(proceso)).start(); // Hilo para desbloquear
     }
 
-    // Método para mover procesos a terminados
-    public void moverAColaTerminados(Proceso proceso) {
-        proceso.getPCB().setEstado("Terminado");
+    public synchronized void moverAColaTerminados(Proceso proceso) {
+        proceso.getPCB().setEstado(PCB.Estado.TERMINATED);
         colaTerminados.enqueue(proceso);
-        simulador.actualizarTablas();
     }
 
-    // Verificar si hay procesos pendientes
-    public synchronized boolean hayProcesosPendientes() {
-        return !planificador.estaVacio() || !colaBloqueados.isEmpty();
+    public void iniciarCPUs() {
+        for (int i = 0; i < cpus.getLength(); i++) {
+            cpus.get(i).start();
+        }
     }
 
-    // Detener la ejecución
     public void detenerCPU() {
         enEjecucion = false;
     }
 
-    // Getters
+    private void manejarDesbloqueo(Proceso p) {
+        try {
+            Thread.sleep(p.getPCB().getCiclosCompletarExcepcion() * duracionCiclo);
+            synchronized (this) {
+                colaBloqueados.dequeue(); // Eliminar de bloqueados
+                p.getPCB().reiniciarContadorBloqueo();
+                agregarProceso(p); // Reinsertar en listos
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    // Getters y Setters
     public boolean isEnEjecucion() {
         return enEjecucion;
     }
 
-    public Planificador getPlanificador() {
-        return planificador;
+    public int getDuracionCiclo() {
+        return duracionCiclo;
     }
 
-    public Queue<Proceso> getColaBloqueados() {
-        return colaBloqueados;
+    public void setDuracionCiclo(int ms) {
+        this.duracionCiclo = ms;
     }
-
-    public Queue<Proceso> getColaTerminados() {
-        return colaTerminados;
-    }
-
 }

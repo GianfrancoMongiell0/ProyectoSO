@@ -24,13 +24,13 @@ public class ProyectoSistemasOperativos {
         //lector.leerArchivo(ruta);
         Planificador plan = new FCFS();
         Simulador simulador = new Simulador();
-        SistemaOperativo so = new SistemaOperativo(plan, simulador);
+        SistemaOperativo so = new SistemaOperativo(plan, 2);
 
         simulador.setVisible(true);
         /*so.iniciarCPU();
         
         Aqui hay que hacerlo desde la interfaz
-        */
+         */
 
     }
 }

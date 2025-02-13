@@ -1,43 +1,40 @@
 package Clases;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-/**
- *
- * @author gianf
- */
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class PCB {
 
-    // Atributos del PCB
-    private static int contadorID = 0; // Generador de IDs únicos
+    public enum Estado {
+        READY, RUNNING, BLOCKED, TERMINATED
+    }
+
+    private static final AtomicInteger contadorID = new AtomicInteger(0);
     private final int id;
-    private String estado; // Running, Blocked, Ready
+    private Estado estado;
     private final String nombre;
-    private int pc; // Program Counter
-    private int mar; // Memory Address Register
+    private int pc;
+    private int mar;
     private final boolean esIOBound;
-    private int ciclosExcepcion; // Ciclos para generar excepción (solo I/O bound)
-    private int ciclosCompletarExcepcion; // Ciclos para resolver excepción (solo I/O bound)
-    private int ciclosEjecutadosDesdeUltimoBloqueo = 0; // Contador de ciclos ejecutados
+    private int ciclosExcepcion;
+    private int ciclosCompletarExcepcion;
+    private int ciclosEjecutadosDesdeUltimoBloqueo = 0;
     private int tiempoLlegada;
 
-    // Constructor (para CPU-bound)
+    // Constructor para CPU-bound
     public PCB(String nombre) {
-        this.id = contadorID++;
+        this.id = contadorID.getAndIncrement();
         this.nombre = nombre;
-        this.estado = "Ready";
+        this.estado = Estado.READY;
         this.pc = 0;
         this.mar = 0;
         this.esIOBound = false;
     }
 
-    // Constructor (para I/O bound)
+    // Constructor para I/O bound
     public PCB(String nombre, int ciclosExcepcion, int ciclosCompletarExcepcion) {
-        this.id = contadorID++;
+        this.id = contadorID.getAndIncrement();
         this.nombre = nombre;
-        this.estado = "Ready";
+        this.estado = Estado.READY;
         this.pc = 0;
         this.mar = 0;
         this.esIOBound = true;
@@ -45,16 +42,16 @@ public class PCB {
         this.ciclosCompletarExcepcion = ciclosCompletarExcepcion;
     }
 
-    // Getters y setters (solo los críticos)
+    // Getters y setters
     public int getId() {
         return id;
     }
 
-    public String getEstado() {
+    public Estado getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(Estado estado) {
         this.estado = estado;
     }
 
@@ -64,7 +61,7 @@ public class PCB {
 
     public void incrementarPc() {
         pc++;
-    } // Avanza el PC en cada ciclo
+    }
 
     public int getMar() {
         return mar;
@@ -72,7 +69,7 @@ public class PCB {
 
     public void incrementarMar() {
         mar++;
-    } // Avanza el MAR en cada ciclo
+    }
 
     public boolean esIOBound() {
         return esIOBound;
@@ -90,22 +87,6 @@ public class PCB {
         return nombre;
     }
 
-    public static int getContadorID() {
-        return contadorID;
-    }
-
-    public static void setContadorID(int contadorID) {
-        PCB.contadorID = contadorID;
-    }
-
-    public int getCiclosEjecutadosDesdeUltimoBloqueo() {
-        return ciclosEjecutadosDesdeUltimoBloqueo;
-    }
-
-    public void setCiclosEjecutadosDesdeUltimoBloqueo(int ciclosEjecutadosDesdeUltimoBloqueo) {
-        this.ciclosEjecutadosDesdeUltimoBloqueo = ciclosEjecutadosDesdeUltimoBloqueo;
-    }
-
     public int getTiempoLlegada() {
         return tiempoLlegada;
     }
@@ -114,20 +95,27 @@ public class PCB {
         this.tiempoLlegada = tiempoLlegada;
     }
 
-    // Método para verificar si el proceso debe bloquearse
+    // Métodos para manejo de bloqueo
     public boolean debeBloquearse() {
         if (esIOBound) {
             ciclosEjecutadosDesdeUltimoBloqueo++;
             if (ciclosEjecutadosDesdeUltimoBloqueo >= ciclosExcepcion) {
-                ciclosEjecutadosDesdeUltimoBloqueo = 0; // Reiniciar contador
+                ciclosEjecutadosDesdeUltimoBloqueo = 0;
                 return true;
             }
         }
         return false;
     }
 
+    public void reiniciarContadorBloqueo() {
+        ciclosEjecutadosDesdeUltimoBloqueo = 0;
+    }
+
     @Override
     public String toString() {
-        return id + "," + nombre + "," + estado + "," + pc + "," + mar;
+        return String.format(
+                "PCB[ID=%d, Nombre=%s, Estado=%s, PC=%d, MAR=%d]",
+                id, nombre, estado.name(), pc, mar
+        );
     }
 }
