@@ -133,8 +133,6 @@ public class Simulador extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jScrollPane5 = new javax.swing.JScrollPane();
         ColaTerminados = new javax.swing.JTable();
-        PClabel = new javax.swing.JLabel();
-        valorPC = new javax.swing.JLabel();
         algoritmoPlan = new javax.swing.JLabel();
         cpusAct = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
@@ -145,6 +143,7 @@ public class Simulador extends javax.swing.JFrame {
         statusP1 = new javax.swing.JLabel();
         pcP1 = new javax.swing.JLabel();
         marP1 = new javax.swing.JLabel();
+        enEjP1 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         estCPU2 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
@@ -153,6 +152,7 @@ public class Simulador extends javax.swing.JFrame {
         statusP2 = new javax.swing.JLabel();
         pcP2 = new javax.swing.JLabel();
         marP2 = new javax.swing.JLabel();
+        enEjP2 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         estCPU3 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
@@ -161,6 +161,7 @@ public class Simulador extends javax.swing.JFrame {
         statusP3 = new javax.swing.JLabel();
         pcP3 = new javax.swing.JLabel();
         marP3 = new javax.swing.JLabel();
+        enEjP3 = new javax.swing.JLabel();
         cpusAct1 = new javax.swing.JLabel();
         valorCicloReloj = new javax.swing.JLabel();
 
@@ -470,7 +471,6 @@ public class Simulador extends javax.swing.JFrame {
         cpussoo.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         cpussoo.setForeground(new java.awt.Color(255, 255, 255));
         cpussoo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        cpussoo.setText("CPU/SSOO");
 
         ciclosdereloj.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         ciclosdereloj.setForeground(new java.awt.Color(255, 255, 255));
@@ -539,16 +539,6 @@ public class Simulador extends javax.swing.JFrame {
         ));
         jScrollPane5.setViewportView(ColaTerminados);
 
-        PClabel.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
-        PClabel.setForeground(new java.awt.Color(255, 255, 255));
-        PClabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        PClabel.setText("PC: ");
-
-        valorPC.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        valorPC.setForeground(new java.awt.Color(255, 255, 255));
-        valorPC.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        valorPC.setText("0");
-
         algoritmoPlan.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         algoritmoPlan.setForeground(new java.awt.Color(255, 255, 255));
         algoritmoPlan.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -562,23 +552,27 @@ public class Simulador extends javax.swing.JFrame {
         jPanel3.setBackground(new java.awt.Color(122, 186, 143));
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "CPU 1", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 1, 12), new java.awt.Color(255, 255, 255))); // NOI18N
 
-        estCPU1.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
+        estCPU1.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
         estCPU1.setText("Estado CPU");
 
-        idP1.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        idP1.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
         idP1.setText("ID proceso");
 
-        nombreP1.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        nombreP1.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
         nombreP1.setText("Nombre proceso");
 
-        statusP1.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        statusP1.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
         statusP1.setText("Status");
 
-        pcP1.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        pcP1.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
         pcP1.setText("PC");
 
-        marP1.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        marP1.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
         marP1.setText("MAR");
+
+        enEjP1.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
+        enEjP1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        enEjP1.setText("En ejecución: SO/PU");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -604,7 +598,10 @@ public class Simulador extends javax.swing.JFrame {
                             .addComponent(marP1)))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(68, 68, 68)
-                        .addComponent(idP1)))
+                        .addComponent(idP1))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(53, 53, 53)
+                        .addComponent(enEjP1)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -621,7 +618,9 @@ public class Simulador extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(statusP1)
                     .addComponent(marP1))
-                .addGap(50, 50, 50)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(enEjP1)
+                .addGap(28, 28, 28)
                 .addComponent(jLabel9)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
@@ -629,23 +628,27 @@ public class Simulador extends javax.swing.JFrame {
         jPanel5.setBackground(new java.awt.Color(122, 186, 143));
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "CPU 2", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 1, 12), new java.awt.Color(255, 255, 255))); // NOI18N
 
-        estCPU2.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
+        estCPU2.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
         estCPU2.setText("Estado CPU");
 
-        idP2.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        idP2.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
         idP2.setText("ID proceso");
 
-        nombreP2.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        nombreP2.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
         nombreP2.setText("Nombre proceso");
 
-        statusP2.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        statusP2.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
         statusP2.setText("Status");
 
-        pcP2.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        pcP2.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
         pcP2.setText("PC");
 
-        marP2.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        marP2.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
         marP2.setText("MAR");
+
+        enEjP2.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
+        enEjP2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        enEjP2.setText("En ejecución: SO/PU");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -671,8 +674,11 @@ public class Simulador extends javax.swing.JFrame {
                             .addComponent(marP2)))
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGap(68, 68, 68)
-                        .addComponent(idP2)))
-                .addContainerGap(69, Short.MAX_VALUE))
+                        .addComponent(idP2))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGap(51, 51, 51)
+                        .addComponent(enEjP2)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -688,31 +694,36 @@ public class Simulador extends javax.swing.JFrame {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(statusP2)
                     .addComponent(marP2))
-                .addGap(50, 50, 50)
-                .addComponent(jLabel11)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(enEjP2)
+                .addGap(28, 28, 28)
+                .addComponent(jLabel11))
         );
 
         jPanel6.setBackground(new java.awt.Color(122, 186, 143));
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "CPU 3", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 1, 12), new java.awt.Color(255, 255, 255))); // NOI18N
 
-        estCPU3.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
+        estCPU3.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
         estCPU3.setText("Estado CPU");
 
-        idP3.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        idP3.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
         idP3.setText("ID proceso");
 
-        nombreP3.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        nombreP3.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
         nombreP3.setText("Nombre proceso");
 
-        statusP3.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        statusP3.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
         statusP3.setText("Status");
 
-        pcP3.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        pcP3.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
         pcP3.setText("PC");
 
-        marP3.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        marP3.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
         marP3.setText("MAR");
+
+        enEjP3.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
+        enEjP3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        enEjP3.setText("En ejecución: SO/PU");
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -738,7 +749,10 @@ public class Simulador extends javax.swing.JFrame {
                             .addComponent(marP3)))
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addGap(68, 68, 68)
-                        .addComponent(idP3)))
+                        .addComponent(idP3))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGap(51, 51, 51)
+                        .addComponent(enEjP3)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
@@ -755,15 +769,15 @@ public class Simulador extends javax.swing.JFrame {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(statusP3)
                     .addComponent(marP3))
-                .addGap(50, 50, 50)
-                .addComponent(jLabel12)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(enEjP3)
+                .addGap(34, 34, 34)
+                .addComponent(jLabel12))
         );
 
         cpusAct1.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         cpusAct1.setForeground(new java.awt.Color(255, 255, 255));
         cpusAct1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        cpusAct1.setText("En ejecución:");
 
         valorCicloReloj.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         valorCicloReloj.setForeground(new java.awt.Color(255, 255, 255));
@@ -798,13 +812,9 @@ public class Simulador extends javax.swing.JFrame {
                                 .addComponent(cpussoo, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(algoritmoPlan))
                         .addGap(137, 137, 137)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(cliclosreloj1)
-                            .addComponent(PClabel))
+                        .addComponent(cliclosreloj1)
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(valorCicloReloj, javax.swing.GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
-                            .addComponent(valorPC, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(valorCicloReloj, javax.swing.GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE))
                     .addComponent(jScrollPane2)
                     .addComponent(jScrollPane4)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -827,10 +837,7 @@ public class Simulador extends javax.swing.JFrame {
                             .addComponent(algoritmoPlan, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(valorCicloReloj, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(valorPC, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(PClabel)
-                            .addComponent(cpusAct, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(cpusAct, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(cpusAct1, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -849,18 +856,19 @@ public class Simulador extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel7)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ciclosdereloj, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(317, 317, 317))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(ciclosdereloj, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(317, 317, 317))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
 
         jTabbedPane1.addTab("Simulación", jPanel1);
@@ -1013,7 +1021,6 @@ public class Simulador extends javax.swing.JFrame {
     private javax.swing.JTable ColaBloqueados;
     private javax.swing.JTable ColaListos;
     private javax.swing.JTable ColaTerminados;
-    private javax.swing.JLabel PClabel;
     private javax.swing.JLabel algoritmoPlan;
     private javax.swing.JComboBox<String> algoritmoPlanificacion;
     private javax.swing.JButton botonSaveconfig;
@@ -1031,6 +1038,9 @@ public class Simulador extends javax.swing.JFrame {
     private javax.swing.JLabel cpussoo;
     private javax.swing.JButton crearProceso;
     private javax.swing.JSpinner duracionCE;
+    private javax.swing.JLabel enEjP1;
+    private javax.swing.JLabel enEjP2;
+    private javax.swing.JLabel enEjP3;
     private javax.swing.JLabel estCPU1;
     private javax.swing.JLabel estCPU2;
     private javax.swing.JLabel estCPU3;
@@ -1082,6 +1092,5 @@ public class Simulador extends javax.swing.JFrame {
     private javax.swing.JLabel statusP3;
     private javax.swing.JComboBox<String> tipo;
     private javax.swing.JLabel valorCicloReloj;
-    private javax.swing.JLabel valorPC;
     // End of variables declaration//GEN-END:variables
 }
