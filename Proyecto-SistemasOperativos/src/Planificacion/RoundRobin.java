@@ -5,12 +5,8 @@ import Estructuras.Queue;
 import java.util.concurrent.Semaphore;
 
 public class RoundRobin extends Planificador {
-
-    private Queue<Proceso> colaListos = new Queue<>();
-    private int quantum;
-
-    public RoundRobin(int quantum) {
-        this.quantum = quantum;
+    public RoundRobin() {
+        this.quantum = 5;
     }
 
     @Override

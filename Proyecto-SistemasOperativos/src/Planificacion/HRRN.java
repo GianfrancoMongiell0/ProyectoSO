@@ -17,20 +17,21 @@ public class HRRN extends Planificador {
             }
 
             double maxRatio = -1;
-            int maxIndex = 0;
+            Proceso seleccionado = null;
             for (int i = 0; i < colaListos.getLength(); i++) {
-                Proceso p = colaListos.get(i);
+                Proceso p = colaListos.dequeue();
                 double ratio = calcularResponseRatio(p);
                 if (ratio > maxRatio) {
                     maxRatio = ratio;
-                    maxIndex = i;
+                    seleccionado = p;
                 }
+                colaListos.enqueue(p);
             }
 
-            Proceso seleccionado = colaListos.get(maxIndex);
-            colaListos.deleteIndex(maxIndex);
+            colaListos.dequeue();
             tiempoGlobal += seleccionado.getInstruccionesRestantes();
             return seleccionado;
+
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -45,7 +46,7 @@ public class HRRN extends Planificador {
         try {
             mutex.acquire();
             p.getPCB().setTiempoLlegada(tiempoGlobal);
-            colaListos.insertLast(p);
+            colaListos.enqueue(p);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {

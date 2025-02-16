@@ -2,49 +2,90 @@ package Clases;
 
 import Estructuras.Lista;
 import Estructuras.Queue;
+import Interfaces.Simulador;
+import javax.swing.SwingUtilities;
 import planificacion.Planificador;
 
 public class SistemaOperativo {
 
     private final Planificador planificador;
-    private final Queue<Proceso> colaBloqueados;
-    private final Queue<Proceso> colaTerminados;
+    private Queue<Proceso> colaBloqueados;
+    private Queue<Proceso> colaTerminados;
     private final Lista<CPU> cpus;
     private volatile boolean enEjecucion; // volatile para visibilidad entre hilos
     private int duracionCiclo = 1000;
+    private Simulador simulador;
 
-    public SistemaOperativo(Planificador planificador, int numCPUs) {
+    public SistemaOperativo(Planificador planificador, int numCPUs,  Queue<Proceso> colaListos) {
         this.planificador = planificador;
-        this.colaBloqueados = new Queue<>();
-        this.colaTerminados = new Queue<>();
+        //this.colaBloqueados = new Queue<>();
+        //this.colaTerminados = new Queue<>();
         this.cpus = new Lista<>();
         this.enEjecucion = true;
+        
+        // Pasar la cola de listos al planificador
+        this.planificador.setColaListos(colaListos);
 
         for (int i = 0; i < numCPUs; i++) {
             cpus.insertLast(new CPU(this, i + 1));
         }
     }
 
+    public synchronized void setColaTerminados(Queue<Proceso> colaTerminados) {
+      this.colaTerminados = colaTerminados;
+       actualizarGUI(); // Refrescar interfaz
+    }
+
+    public synchronized void setColaBloqueados(Queue<Proceso> colaBloqueados) {
+        this.colaBloqueados = colaBloqueados;
+        actualizarGUI(); // Refrescar interfaz
+    }
     // Métodos sincronizados
     public synchronized void agregarProceso(Proceso proceso) {
+        System.out.println("SO: Intentando agregar proceso " + proceso.getPCB().getNombre());
+
         if (!proceso.estaTerminado() && !proceso.debeBloquearse()) {
             planificador.agregarProceso(proceso);
+            System.out.println("SO: Proceso agregado correctamente a la cola. Estado actual de la cola:");
+            if (simulador != null) {
+            simulador.setColaListos(planificador.getColaListos());
+            simulador.actualizarTablas();
+        }
+        } else {
+            System.out.println("SO: Proceso rechazado porque está terminado o bloqueado.");
         }
     }
 
     public synchronized Proceso obtenerSiguienteProceso() {
-        return planificador.siguienteProceso();
+        Proceso p = planificador.siguienteProceso();
+        if (p == null) {
+            System.out.println("SO: No hay procesos en la cola.");
+        } else {
+            System.out.println("SO: Asignando proceso " + p.getPCB().getNombre());
+            actualizarGUI();
+        }
+        return p;
     }
 
     public synchronized void moverAColaBloqueados(Proceso proceso) {
+        System.out.println("SO: Proceso " + proceso.getPCB().getNombre() + " movido a Bloqueados");
         proceso.getPCB().setEstado(PCB.Estado.BLOCKED);
         colaBloqueados.enqueue(proceso);
+        if (simulador != null) {
+        simulador.setColaBloqueados(colaBloqueados);
+        simulador.actualizarTablas();
+        }
         new Thread(() -> manejarDesbloqueo(proceso)).start(); // Hilo para desbloquear
     }
 
     public synchronized void moverAColaTerminados(Proceso proceso) {
+        System.out.println("SO: Proceso " + proceso.getPCB().getNombre() + " movido a Terminados");
         proceso.getPCB().setEstado(PCB.Estado.TERMINATED);
         colaTerminados.enqueue(proceso);
+        if (simulador != null) {
+        simulador.setColaTerminados(colaTerminados);
+        simulador.actualizarTablas();
+    }
     }
 
     public void iniciarCPUs() {
@@ -82,4 +123,80 @@ public class SistemaOperativo {
     public void setDuracionCiclo(int ms) {
         this.duracionCiclo = ms;
     }
+
+    public Simulador getSimulador() {
+        return simulador;
+    }
+    
+
+    public void setSimulador(Simulador simulador) {
+        this.simulador = simulador;
+    }
+
+    public Lista<CPU> getCpus() {
+        return cpus;
+    }
+   
+
+    
+    private void actualizarGUI() {
+        if (simulador != null) {
+            System.out.println("Actualizando GUI...");
+            SwingUtilities.invokeLater(() -> {
+                simulador.actualizarTablas();
+                System.out.println("Tablas actualizadas.");
+            });
+        }
+    }
+
+    
+    public synchronized Proceso obtenerProcesoEnEjecucion() {
+        for (int i = 0; i < cpus.getLength(); i++) {
+            CPU cpu = cpus.get(i);
+            Proceso procesoEnEjecucion = cpu.obtenerProcesoEnEjecucion();
+            if (procesoEnEjecucion != null) {
+                return procesoEnEjecucion;
+            }
+        }
+        return null; // Si no hay proceso en ejecución
+    }
+    
+    private int ciclosRelojGlobal = 0;
+
+    public void incrementarCiclosReloj() {
+        ciclosRelojGlobal++;
+
+        // Utilizar SwingUtilities.invokeLater para actualizar los componentes en el hilo de eventos
+        if (simulador != null) {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    // Actualiza el JLabel de ciclos de reloj en el simulador
+                    simulador.valorCicloReloj.setText("Ciclos de Reloj: " + ciclosRelojGlobal);
+                }
+            });
+        }
+    }
+    public void ejecutarSimulacion() {
+    while (enEjecucion) {
+        // Incrementar ciclos de reloj global
+        incrementarCiclosReloj();
+
+        // Llamar a actualizarLabelsCPU para cada CPU activa
+        if (simulador != null) {
+            for (int i = 0; i < cpus.getLength(); i++) {
+                simulador.actualizarEstadoCPU(i,obtenerProcesoEnEjecucion() ) ;
+            }
+        } else {
+            System.out.println("Error: Simulador no inicializado en SistemaOperativo.");
+        }
+
+        try {
+            Thread.sleep(duracionCiclo);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+}
+
 }

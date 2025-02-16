@@ -4,7 +4,9 @@
  */
 package Interfaces;
 
+import Clases.CPU;
 import Clases.Proceso;
+import Clases.SistemaOperativo;
 import Estructuras.Lista;
 import Estructuras.Nodo;
 import Estructuras.Queue;
@@ -14,8 +16,12 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
+import planificacion.*;
 
 /**
  *
@@ -23,12 +29,12 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Simulador extends javax.swing.JFrame {
 
-    String rutaArchivo = "C:/Users/gianf/Desktop/PruebaJava.txt";
+    String rutaArchivo = "PruebaJava.txt";
     LectorEscritorTxt lector = new LectorEscritorTxt();
     private Queue<Proceso> colaListos = new Queue<>();
     private Queue<Proceso> colaBloqueados = new Queue<>();
     private Queue<Proceso> colaTerminados = new Queue<>();
-
+    private SistemaOperativo sistemaOperativo;
     private DefaultTableModel modeloTablaListos = new DefaultTableModel(
             new Object[][]{}, new String[]{"Id", "Nombre", "Estado", "PC", "MAR"}
     );
@@ -40,7 +46,7 @@ public class Simulador extends javax.swing.JFrame {
     private DefaultTableModel modeloTablaTerminados = new DefaultTableModel(
             new Object[][]{}, new String[]{"Id", "Nombre", "Estado", "PC", "MAR"}
     );
-
+    
     public Simulador() {
         initComponents();
         ColaListos.setModel(modeloTablaListos);
@@ -49,10 +55,25 @@ public class Simulador extends javax.swing.JFrame {
     }
 
     public void agregarProceso(Proceso proceso) {
-        colaListos.enqueue(proceso);
+        if (sistemaOperativo != null) {
+            sistemaOperativo.agregarProceso(proceso);
+        }
         actualizarTablas();
     }
 
+    public void setColaBloqueados(Queue<Proceso> colaBloqueados) {
+        this.colaBloqueados = colaBloqueados;
+    }
+
+    public void setColaTerminados(Queue<Proceso> colaTerminados) {
+        this.colaTerminados = colaTerminados;
+    }
+
+    public void setColaListos(Queue<Proceso> colaListos) {
+        this.colaListos = colaListos;
+    }
+
+       
     public void actualizarTablas() {
         actualizarTabla(colaListos, modeloTablaListos);
         actualizarTabla(colaBloqueados, modeloTablaBloqueados);
@@ -81,6 +102,32 @@ public class Simulador extends javax.swing.JFrame {
         }
     }
 
+    public void actualizarEstadoCPU(int idCPU, Proceso proceso) {
+        SwingUtilities.invokeLater(() -> { // Asegurar actualización en el hilo de la UI
+            if (idCPU == 1) {
+                estCPU1.setText("Ejecutando");
+                idP1.setText(String.valueOf(proceso.getPCB().getId()));
+                nombreP1.setText(proceso.getPCB().getNombre());
+                statusP1.setText(proceso.getPCB().getEstado().toString());
+                pcP1.setText(String.valueOf(proceso.getPCB().getPc()));
+                marP1.setText(String.valueOf(proceso.getPCB().getMar()));
+            } else if (idCPU == 2) {
+                estCPU2.setText("Ejecutando");
+                idP2.setText(String.valueOf(proceso.getPCB().getId()));
+                nombreP2.setText(proceso.getPCB().getNombre());
+                statusP2.setText(proceso.getPCB().getEstado().toString());
+                pcP2.setText(String.valueOf(proceso.getPCB().getPc()));
+                marP2.setText(String.valueOf(proceso.getPCB().getMar()));
+            } else if (idCPU == 3) {
+                estCPU3.setText("Ejecutando");
+                idP3.setText(String.valueOf(proceso.getPCB().getId()));
+                nombreP3.setText(proceso.getPCB().getNombre());
+                statusP3.setText(proceso.getPCB().getEstado().toString());
+                pcP3.setText(String.valueOf(proceso.getPCB().getPc()));
+                marP3.setText(String.valueOf(proceso.getPCB().getMar()));
+            }
+        });
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -412,6 +459,11 @@ public class Simulador extends javax.swing.JFrame {
         botonSaveconfig.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         botonSaveconfig.setForeground(new java.awt.Color(255, 255, 255));
         botonSaveconfig.setText("Guardar");
+        botonSaveconfig.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonSaveconfigActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -913,8 +965,8 @@ public class Simulador extends javax.swing.JFrame {
 
         if (tipoProceso.equals("CPU bound")) {
             Proceso proceso = new Proceso(nombre, instrucciones);
-            colaListos.enqueue(proceso);
             System.out.println("Proceso creado y agregado a la cola de listos y es CPU bound.");
+            colaListos.enqueue(proceso);
             agregarProceso(proceso);
             colaListos.imprimir();
             lector.escribirArchivo(rutaArchivo, proceso.getPCB().getNombre() + "," + proceso.getTotalInstrucciones()
@@ -923,8 +975,8 @@ public class Simulador extends javax.swing.JFrame {
             int ciclosExcepcion = (int) cantCiclosGE.getValue();
             int ciclosResolucion = (int) cantCiclosSE.getValue();
             Proceso proceso = new Proceso(nombre, instrucciones, ciclosExcepcion, ciclosResolucion);
-            agregarProceso(proceso);
             colaListos.enqueue(proceso);
+            agregarProceso(proceso);
             System.out.println("Proceso creado y agregado a la cola de listos y es IO bound." + colaListos);
             lector.escribirArchivo(rutaArchivo, proceso.getPCB().getNombre() + "," + proceso.getTotalInstrucciones()
                     + "," + proceso.getPCB().esIOBound() + "," + proceso.getPCB().getCiclosExcepcion() + "," + proceso.getPCB().getCiclosCompletarExcepcion(), true);
@@ -981,6 +1033,62 @@ public class Simulador extends javax.swing.JFrame {
             evt.consume();
         }
     }//GEN-LAST:event_cantInstruccionesKeyTyped
+
+    private void botonSaveconfigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonSaveconfigActionPerformed
+        String algoritmo = (String) algoritmoPlanificacion.getSelectedItem();
+        int numeroCPUs = cpus2.isSelected() ? 2 : 3;
+        int duracion = (int) duracionCE.getValue();
+        boolean enMilisegundos = jComboBox1.getSelectedItem().equals("ms");
+        int duracionMs = enMilisegundos ? duracion : duracion * 1000;
+
+        algoritmoPlan.setText("Algoritmo Actual: " + algoritmo);
+        cpusAct.setText("CPUs Activos: " + numeroCPUs);
+
+        
+        // Crear el planificador basado en el algoritmo seleccionado
+        Planificador planificador;
+        switch (algoritmo) {
+            case "FCFS":
+                planificador = new FCFS();
+                break;
+            case "SJF":
+                planificador = new SJF();
+                break;
+            case "Round Robin":
+                planificador = new RoundRobin();
+                break;
+            case "HRRN":
+                planificador = new HRRN();
+                break;
+            case "SRTN":
+                planificador = new SRTN();
+                break;   
+            default:
+                JOptionPane.showMessageDialog(this, "Algoritmo no soportado.");
+                return;
+        }
+
+        // Crear el sistema operativo y configurar CPUs
+        sistemaOperativo = new SistemaOperativo(planificador, numeroCPUs, colaListos);
+        sistemaOperativo.setDuracionCiclo(duracionMs);
+        sistemaOperativo.setSimulador(this);
+        sistemaOperativo.setColaBloqueados(colaBloqueados);
+        sistemaOperativo.setColaTerminados(colaTerminados);
+        
+     
+        if (!colaListos.isEmpty()) {
+            sistemaOperativo.iniciarCPUs();
+            sistemaOperativo.ejecutarSimulacion(); // Llamada al ciclo de simulación
+            JOptionPane.showMessageDialog(this, "Simulación iniciada con " + numeroCPUs + " CPUs.");
+            
+        } else {
+            JOptionPane.showMessageDialog(this, "No hay procesos en la cola de listos. Agrega procesos antes de iniciar.");
+        }
+
+    
+       // sistemaOperativo.setSimulador(this);
+        //actualizarTablas();
+    }//GEN-LAST:event_botonSaveconfigActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1091,6 +1199,6 @@ public class Simulador extends javax.swing.JFrame {
     private javax.swing.JLabel statusP2;
     private javax.swing.JLabel statusP3;
     private javax.swing.JComboBox<String> tipo;
-    private javax.swing.JLabel valorCicloReloj;
+    public javax.swing.JLabel valorCicloReloj;
     // End of variables declaration//GEN-END:variables
 }

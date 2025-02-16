@@ -22,9 +22,9 @@ public class ProyectoSistemasOperativos {
         //LectorEscritorTxt lector = new LectorEscritorTxt();
         //lector.escribirArchivo(ruta, "Hola", false);
         //lector.leerArchivo(ruta);
-        Planificador plan = new FCFS();
+       // Planificador plan = new FCFS();
         Simulador simulador = new Simulador();
-        SistemaOperativo so = new SistemaOperativo(plan, 2);
+        //SistemaOperativo so = new SistemaOperativo(plan, 2);
 
         simulador.setVisible(true);
         /*so.iniciarCPU();

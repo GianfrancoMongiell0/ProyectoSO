@@ -5,7 +5,6 @@ import Estructuras.Lista;
 import java.util.concurrent.Semaphore;
 
 public class SRTN extends Planificador {
-
     @Override
     public Proceso siguienteProceso() {
         try {
@@ -14,17 +13,18 @@ public class SRTN extends Planificador {
                 return null;
             }
 
-            int minIndex = 0;
-            for (int i = 1; i < colaListos.getLength(); i++) {
-                if (colaListos.get(i).getInstruccionesRestantes()
-                        < colaListos.get(minIndex).getInstruccionesRestantes()) {
-                    minIndex = i;
+            Proceso mejorProceso = colaListos.dequeue();
+            int length = colaListos.getLength();
+            for (int i = 0; i < length; i++) {
+                Proceso p = colaListos.dequeue();
+                if (p.getInstruccionesRestantes() < mejorProceso.getInstruccionesRestantes()) {
+                    colaListos.enqueue(mejorProceso);
+                    mejorProceso = p;
+                } else {
+                    colaListos.enqueue(p);
                 }
             }
-
-            Proceso seleccionado = colaListos.get(minIndex);
-            colaListos.deleteIndex(minIndex);
-            return seleccionado;
+            return mejorProceso;
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -38,7 +38,7 @@ public class SRTN extends Planificador {
     public void agregarProceso(Proceso p) {
         try {
             mutex.acquire();
-            colaListos.insertLast(p);
+            colaListos.enqueue(p);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {
