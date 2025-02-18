@@ -84,9 +84,11 @@ public class Simulador extends javax.swing.JFrame {
         modelo.setRowCount(0);
         Queue<Proceso> copiaCola = new Queue<>();
 
-        while (!cola.isEmpty()) {
-            Proceso proceso = cola.dequeue();
-            copiaCola.enqueue(proceso);
+        // Recorremos la cola sin modificarla
+        Nodo<Proceso> actual = cola.getFirst(); // Obtener el primer nodo
+        while (actual != null) {
+            Proceso proceso = actual.getData(); // Obtener el proceso del nodo
+
             Object[] fila = {
                 proceso.getPCB().getId(),
                 proceso.getPCB().getNombre(),
@@ -95,39 +97,81 @@ public class Simulador extends javax.swing.JFrame {
                 proceso.getPCB().getMar()
             };
             modelo.addRow(fila);
+
+            // Guardamos en la copia para no perder los elementos
+            copiaCola.enqueue(proceso);
+
+            actual = actual.getNext(); // Avanzar al siguiente nodo
         }
 
+        // Restaurar la cola original
+        cola.clear();
         while (!copiaCola.isEmpty()) {
             cola.enqueue(copiaCola.dequeue());
         }
     }
 
+
     public void actualizarEstadoCPU(int idCPU, Proceso proceso) {
         SwingUtilities.invokeLater(() -> { // Asegurar actualización en el hilo de la UI
+            if (proceso == null) {
+                limpiarEstadoCPU(idCPU);
+                return;
+            }
+            
             if (idCPU == 1) {
                 estCPU1.setText("Ejecutando");
-                idP1.setText(String.valueOf(proceso.getPCB().getId()));
-                nombreP1.setText(proceso.getPCB().getNombre());
-                statusP1.setText(proceso.getPCB().getEstado().toString());
-                pcP1.setText(String.valueOf(proceso.getPCB().getPc()));
-                marP1.setText(String.valueOf(proceso.getPCB().getMar()));
+                idP1.setText("ID: "+String.valueOf(proceso.getPCB().getId()));
+                nombreP1.setText("Nombre: "+proceso.getPCB().getNombre());
+                statusP1.setText("Estatus: " + proceso.getPCB().getEstado().toString());
+                pcP1.setText("PC: "+ String.valueOf(proceso.getPCB().getPc()));
+                marP1.setText("MAR: "+String.valueOf(proceso.getPCB().getMar()));
             } else if (idCPU == 2) {
                 estCPU2.setText("Ejecutando");
-                idP2.setText(String.valueOf(proceso.getPCB().getId()));
-                nombreP2.setText(proceso.getPCB().getNombre());
-                statusP2.setText(proceso.getPCB().getEstado().toString());
-                pcP2.setText(String.valueOf(proceso.getPCB().getPc()));
-                marP2.setText(String.valueOf(proceso.getPCB().getMar()));
+                idP2.setText("ID: " +String.valueOf(proceso.getPCB().getId()));
+                nombreP2.setText("Nombre: " + proceso.getPCB().getNombre());
+                statusP2.setText("Estatus: " +proceso.getPCB().getEstado().toString());
+                pcP2.setText("PC: "+String.valueOf(proceso.getPCB().getPc()));
+                marP2.setText("MAR: "+String.valueOf(proceso.getPCB().getMar()));
             } else if (idCPU == 3) {
                 estCPU3.setText("Ejecutando");
-                idP3.setText(String.valueOf(proceso.getPCB().getId()));
-                nombreP3.setText(proceso.getPCB().getNombre());
-                statusP3.setText(proceso.getPCB().getEstado().toString());
-                pcP3.setText(String.valueOf(proceso.getPCB().getPc()));
-                marP3.setText(String.valueOf(proceso.getPCB().getMar()));
+                idP3.setText("ID: " + String.valueOf(proceso.getPCB().getId()));
+                nombreP3.setText("Nombre: " +proceso.getPCB().getNombre());
+                statusP3.setText("Estatus: " +proceso.getPCB().getEstado().toString());
+                pcP3.setText("PC: "+String.valueOf(proceso.getPCB().getPc()));
+                marP3.setText("MAR: "+String.valueOf(proceso.getPCB().getMar()));
             }
         });
     }
+    
+    // Método para limpiar los labels cuando un CPU queda sin proceso
+    public void limpiarEstadoCPU(int idCPU) {
+        SwingUtilities.invokeLater(() -> {
+            if (idCPU == 1) {
+                estCPU1.setText("CPU Libre");
+                idP1.setText("ID: -");
+                nombreP1.setText("Nombre: -");
+                statusP1.setText("Estatus: -");
+                pcP1.setText("PC: -");
+                marP1.setText("MAR: -");
+            } else if (idCPU == 2) {
+                estCPU2.setText("CPU Libre");
+                idP2.setText("ID: -");
+                nombreP2.setText("Nombre: -");
+                statusP2.setText("Estatus: -");
+                pcP2.setText("PC: -");
+                marP2.setText("MAR: -");
+            } else if (idCPU == 3) {
+                estCPU3.setText("CPU Libre");
+                idP3.setText("ID: -");
+                nombreP3.setText("Nombre: -");
+                statusP3.setText("Estatus: -");
+                pcP3.setText("PC: -");
+                marP3.setText("MAR: -");
+            }
+        });
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -170,7 +214,6 @@ public class Simulador extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         cpussoo = new javax.swing.JLabel();
         ciclosdereloj = new javax.swing.JLabel();
-        cliclosreloj1 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         ColaListos = new javax.swing.JTable();
         jLabel5 = new javax.swing.JLabel();
@@ -529,11 +572,6 @@ public class Simulador extends javax.swing.JFrame {
         ciclosdereloj.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         ciclosdereloj.setText("Ciclos de reloj globales");
 
-        cliclosreloj1.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
-        cliclosreloj1.setForeground(new java.awt.Color(255, 255, 255));
-        cliclosreloj1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        cliclosreloj1.setText("Ciclos de reloj global:");
-
         ColaListos.setBackground(new java.awt.Color(122, 186, 143));
         ColaListos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -605,7 +643,7 @@ public class Simulador extends javax.swing.JFrame {
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "CPU 1", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 1, 12), new java.awt.Color(255, 255, 255))); // NOI18N
 
         estCPU1.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
-        estCPU1.setText("Estado CPU");
+        estCPU1.setText("Inactivo");
 
         idP1.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
         idP1.setText("ID proceso");
@@ -681,7 +719,7 @@ public class Simulador extends javax.swing.JFrame {
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "CPU 2", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 1, 12), new java.awt.Color(255, 255, 255))); // NOI18N
 
         estCPU2.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
-        estCPU2.setText("Estado CPU");
+        estCPU2.setText("Inactivo");
 
         idP2.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
         idP2.setText("ID proceso");
@@ -756,7 +794,7 @@ public class Simulador extends javax.swing.JFrame {
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "CPU 3", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 1, 12), new java.awt.Color(255, 255, 255))); // NOI18N
 
         estCPU3.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
-        estCPU3.setText("Estado CPU");
+        estCPU3.setText("Inactivo");
 
         idP3.setFont(new java.awt.Font("Dialog", 1, 8)); // NOI18N
         idP3.setText("ID proceso");
@@ -834,7 +872,7 @@ public class Simulador extends javax.swing.JFrame {
         valorCicloReloj.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         valorCicloReloj.setForeground(new java.awt.Color(255, 255, 255));
         valorCicloReloj.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        valorCicloReloj.setText("0");
+        valorCicloReloj.setText("Ciclo de reloj global: 0");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -854,7 +892,10 @@ public class Simulador extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(ciclosdereloj))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 492, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4)
+                    .addComponent(jScrollPane5)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -862,20 +903,14 @@ public class Simulador extends javax.swing.JFrame {
                                     .addComponent(cpusAct))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(cpussoo, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(algoritmoPlan))
-                        .addGap(137, 137, 137)
-                        .addComponent(cliclosreloj1)
-                        .addGap(18, 18, 18)
-                        .addComponent(valorCicloReloj, javax.swing.GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE))
-                    .addComponent(jScrollPane2)
-                    .addComponent(jScrollPane4)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel6)
                             .addComponent(jLabel7)
                             .addComponent(jLabel5))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane5))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(algoritmoPlan)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(valorCicloReloj, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(34, 34, 34))
         );
         jPanel1Layout.setVerticalGroup(
@@ -885,7 +920,6 @@ public class Simulador extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cliclosreloj1, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(algoritmoPlan, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(valorCicloReloj, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -981,8 +1015,6 @@ public class Simulador extends javax.swing.JFrame {
             lector.escribirArchivo(rutaArchivo, proceso.getPCB().getNombre() + "," + proceso.getTotalInstrucciones()
                     + "," + proceso.getPCB().esIOBound() + "," + proceso.getPCB().getCiclosExcepcion() + "," + proceso.getPCB().getCiclosCompletarExcepcion(), true);
         }
-
-
     }//GEN-LAST:event_crearProcesoActionPerformed
 
     private void cantInstruccionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cantInstruccionesActionPerformed
@@ -1077,17 +1109,16 @@ public class Simulador extends javax.swing.JFrame {
         
      
         if (!colaListos.isEmpty()) {
-            sistemaOperativo.iniciarCPUs();
-            sistemaOperativo.ejecutarSimulacion(); // Llamada al ciclo de simulación
-            JOptionPane.showMessageDialog(this, "Simulación iniciada con " + numeroCPUs + " CPUs.");
-            
+            new Thread(() -> { // Ejecutar en un hilo separado
+                SwingUtilities.invokeLater(() -> 
+                    JOptionPane.showMessageDialog(this, "Simulación iniciada con " + numeroCPUs + " CPUs."));
+                sistemaOperativo.iniciarCPUs();
+                sistemaOperativo.ejecutarSimulacion();
+            }).start();
         } else {
             JOptionPane.showMessageDialog(this, "No hay procesos en la cola de listos. Agrega procesos antes de iniciar.");
         }
 
-    
-       // sistemaOperativo.setSimulador(this);
-        //actualizarTablas();
     }//GEN-LAST:event_botonSaveconfigActionPerformed
 
     /**
@@ -1138,7 +1169,6 @@ public class Simulador extends javax.swing.JFrame {
     private javax.swing.JTextField cantInstrucciones;
     private javax.swing.JButton cargarProceso;
     private javax.swing.JLabel ciclosdereloj;
-    private javax.swing.JLabel cliclosreloj1;
     private javax.swing.JRadioButton cpus2;
     private javax.swing.JRadioButton cpus3;
     private javax.swing.JLabel cpusAct;

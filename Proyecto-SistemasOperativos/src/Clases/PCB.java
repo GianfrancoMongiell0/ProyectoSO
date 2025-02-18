@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class PCB {
 
     public enum Estado {
-        READY, RUNNING, BLOCKED, TERMINATED
+        READY, RUNNING, BLOCKED, TERMINATED,
     }
 
     private static final AtomicInteger contadorID = new AtomicInteger(0);

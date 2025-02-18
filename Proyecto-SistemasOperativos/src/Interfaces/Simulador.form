@@ -409,7 +409,10 @@
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                               <Component id="ciclosdereloj" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Group type="102" alignment="1" attributes="0">
+                          <Component id="jScrollPane2" alignment="0" pref="492" max="32767" attributes="0"/>
+                          <Component id="jScrollPane4" alignment="0" max="32767" attributes="0"/>
+                          <Component id="jScrollPane5" alignment="0" max="32767" attributes="0"/>
+                          <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <Group type="103" groupAlignment="1" attributes="0">
@@ -419,24 +422,17 @@
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Component id="cpussoo" min="-2" pref="86" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="algoritmoPlan" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="137" max="-2" attributes="0"/>
-                              <Component id="cliclosreloj1" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="valorCicloReloj" pref="19" max="32767" attributes="0"/>
-                          </Group>
-                          <Component id="jScrollPane2" alignment="0" max="32767" attributes="0"/>
-                          <Component id="jScrollPane4" alignment="0" max="32767" attributes="0"/>
-                          <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jLabel6" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
-                          <Component id="jScrollPane5" alignment="0" max="32767" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="algoritmoPlan" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
+                              <Component id="valorCicloReloj" min="-2" pref="205" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
                       <EmptySpace min="34" pref="34" max="-2" attributes="0"/>
                   </Group>
@@ -449,7 +445,6 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="cliclosreloj1" alignment="3" min="-2" pref="16" max="-2" attributes="0"/>
                                   <Component id="algoritmoPlan" alignment="3" min="-2" pref="16" max="-2" attributes="0"/>
                                   <Component id="valorCicloReloj" alignment="3" min="-2" pref="16" max="-2" attributes="0"/>
                               </Group>
@@ -728,18 +723,6 @@
                 <Property name="text" type="java.lang.String" value="Ciclos de reloj globales"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="cliclosreloj1">
-              <Properties>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Dialog" size="12" style="1"/>
-                </Property>
-                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                </Property>
-                <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="text" type="java.lang.String" value="Ciclos de reloj global:"/>
-              </Properties>
-            </Component>
             <Container class="javax.swing.JScrollPane" name="jScrollPane2">
               <AuxValues>
                 <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
@@ -997,7 +980,7 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Dialog" size="8" style="1"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="Estado CPU"/>
+                    <Property name="text" type="java.lang.String" value="Inactivo"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel9">
@@ -1137,7 +1120,7 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Dialog" size="8" style="1"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="Estado CPU"/>
+                    <Property name="text" type="java.lang.String" value="Inactivo"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel11">
@@ -1277,7 +1260,7 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Dialog" size="8" style="1"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="Estado CPU"/>
+                    <Property name="text" type="java.lang.String" value="Inactivo"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel12">
@@ -1353,7 +1336,7 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="text" type="java.lang.String" value="0"/>
+                <Property name="text" type="java.lang.String" value="Ciclo de reloj global: 0"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>

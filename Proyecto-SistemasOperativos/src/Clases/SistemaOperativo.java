@@ -1,6 +1,8 @@
 package Clases;
 
+import Clases.PCB.Estado;
 import Estructuras.Lista;
+import Estructuras.Nodo;
 import Estructuras.Queue;
 import Interfaces.Simulador;
 import javax.swing.SwingUtilities;
@@ -150,6 +152,19 @@ public class SistemaOperativo {
     }
 
     
+    public synchronized Proceso obtenerProcesoEnEjecucion(int idCPU) {
+        CPU cpu = cpus.get(idCPU - 1); // Ajustar el índice, ya que los índices en la lista son 0-based
+        Proceso proceso = cpu.obtenerProcesoEnEjecucion();
+
+        // Asegurar que no devolvemos un proceso terminado
+        if (proceso != null && proceso.getPCB().getEstado() == Estado.TERMINATED) {
+            return null;
+        }
+
+        return proceso;
+    }
+
+    
     public synchronized Proceso obtenerProcesoEnEjecucion() {
         for (int i = 0; i < cpus.getLength(); i++) {
             CPU cpu = cpus.get(i);
@@ -160,6 +175,7 @@ public class SistemaOperativo {
         }
         return null; // Si no hay proceso en ejecución
     }
+    
     
     private int ciclosRelojGlobal = 0;
 
@@ -172,31 +188,53 @@ public class SistemaOperativo {
                 @Override
                 public void run() {
                     // Actualiza el JLabel de ciclos de reloj en el simulador
-                    simulador.valorCicloReloj.setText("Ciclos de Reloj: " + ciclosRelojGlobal);
+                    simulador.valorCicloReloj.setText("Ciclos de Reloj Global: " + ciclosRelojGlobal);
                 }
             });
         }
     }
-    public void ejecutarSimulacion() {
-    while (enEjecucion) {
-        // Incrementar ciclos de reloj global
-        incrementarCiclosReloj();
-
-        // Llamar a actualizarLabelsCPU para cada CPU activa
-        if (simulador != null) {
-            for (int i = 0; i < cpus.getLength(); i++) {
-                simulador.actualizarEstadoCPU(i,obtenerProcesoEnEjecucion() ) ;
+    
+   public void ejecutarSimulacion() { 
+        while (enEjecucion) {
+            if (debeDetenerSimulacion()) {
+                System.out.println("Simulación detenida: No hay más procesos en ejecución.");
+                enEjecucion = false;
+                break;
             }
-        } else {
-            System.out.println("Error: Simulador no inicializado en SistemaOperativo.");
-        }
 
-        try {
-            Thread.sleep(duracionCiclo);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            incrementarCiclosReloj();
+
+            if (simulador != null) {
+                for (int i = 0; i < cpus.getLength(); i++) {
+                    CPU cpu = cpus.get(i);
+                    Proceso proceso = cpu.obtenerProcesoEnEjecucion(); // Obtener el proceso de la CPU directamente
+
+                    if (proceso == null || proceso.getPCB().getEstado() == Estado.TERMINATED) {
+                        // Si no hay proceso o el proceso ha terminado, limpiar CPU
+                        simulador.limpiarEstadoCPU(i + 1);
+                    } else {
+                        // Si hay un proceso en ejecución, actualizar la interfaz
+                        simulador.actualizarEstadoCPU(i + 1, proceso);
+                    }
+                }
+            } else {
+                System.out.println("Error: Simulador no inicializado en SistemaOperativo.");
+            }
+
+            try {
+                Thread.sleep(duracionCiclo);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
-}
 
+
+
+    
+    private boolean debeDetenerSimulacion() {
+        return planificador.getColaListos().isEmpty() && 
+               colaBloqueados.isEmpty() && 
+               obtenerProcesoEnEjecucion() == null;
+    }
 }

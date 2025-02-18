@@ -26,33 +26,37 @@ public class CPU extends Thread {
                     continue;
                 }
                 
+                proceso.getPCB().setEstado(PCB.Estado.RUNNING); // Establecer estado a RUNNING
+
                 // Asignar el proceso a la CPU
                 procesoEnEjecucion = proceso;
                 proceso.ejecutarInstruccion();
-                System.out.println("CPU " + id + " ejecutando: " + proceso.getPCB().toString());
+                // Bucle para ejecutar instrucciones hasta que el proceso termine o se bloquee
+             while (!proceso.estaTerminado() && !proceso.debeBloquearse()) {
+                 proceso.ejecutarInstruccion();
+                 System.out.println("CPU " + id + " ejecutando: " + proceso.getPCB().toString());
+                 so.incrementarCiclosReloj(); // Actualizar ciclos de reloj globales
 
-                // Actualiza los ciclos de reloj globales
-                so.incrementarCiclosReloj();
-                
-                System.out.println("CPU " + id + ": Evaluando proceso " + proceso.getPCB().getNombre());
-                if (proceso.estaTerminado()) {
-                System.out.println("CPU " + id + ": Mover a Terminados " + proceso.getPCB().getNombre());
-                so.moverAColaTerminados(proceso);
-            } else if (proceso.debeBloquearse()) {
-                System.out.println("CPU " + id + ": Mover a Bloqueados " + proceso.getPCB().getNombre());
-                so.moverAColaBloqueados(proceso);
-            } else {
-                System.out.println("CPU " + id + ": Reagregar a la cola de listos " + proceso.getPCB().getNombre());
-                so.agregarProceso(proceso);
-            }
-                
-                Thread.sleep(so.getDuracionCiclo());
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-    }
-    
-   
+                 try {
+                     Thread.sleep(so.getDuracionCiclo()); // Simular duración de ciclo
+                 } catch (InterruptedException e) {
+                     Thread.currentThread().interrupt();
+                 }
+             }
+
+             // Después de terminar o bloquearse, manejar el proceso
+             if (proceso.estaTerminado()) {
+                 so.moverAColaTerminados(proceso);
+             } else if (proceso.debeBloquearse()) {
+                 so.moverAColaBloqueados(proceso);
+             } else {
+                 so.agregarProceso(proceso); // Si no ha terminado ni bloqueado
+             }
+
+             procesoEnEjecucion = null; // La CPU está libre
+         } catch (InterruptedException e) {
+             Thread.currentThread().interrupt();
+         }
 }
-
+    }
+}

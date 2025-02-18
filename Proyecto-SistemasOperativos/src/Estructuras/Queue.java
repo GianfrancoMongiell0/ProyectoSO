@@ -36,7 +36,11 @@ public class Queue<T> {
         return length;
     }
 
-    /**
+    public Nodo<T> getFirst() {
+        return first;
+    }
+
+        /**
      * Inserta un elemento al final de la cola 
      * @param data El dato que se va a agregar.
      */
@@ -96,5 +100,14 @@ public class Queue<T> {
             actual = actual.getNext();
         }
         System.out.println("NULL");
+    }
+    
+    /**
+     * Elimina todos los elementos de la cola, dejándola vacía.
+     */
+    public void clear() {
+        first = null;
+        last = null;
+        length = 0;
     }
 }
