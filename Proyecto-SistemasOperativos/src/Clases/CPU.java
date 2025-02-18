@@ -30,12 +30,11 @@ public class CPU extends Thread {
 
                 // Asignar el proceso a la CPU
                 procesoEnEjecucion = proceso;
-                proceso.ejecutarInstruccion();
+             
                 // Bucle para ejecutar instrucciones hasta que el proceso termine o se bloquee
              while (!proceso.estaTerminado() && !proceso.debeBloquearse()) {
                  proceso.ejecutarInstruccion();
                  System.out.println("CPU " + id + " ejecutando: " + proceso.getPCB().toString());
-                 so.incrementarCiclosReloj(); // Actualizar ciclos de reloj globales
 
                  try {
                      Thread.sleep(so.getDuracionCiclo()); // Simular duración de ciclo

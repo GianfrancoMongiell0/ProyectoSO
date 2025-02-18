@@ -189,6 +189,7 @@ public class SistemaOperativo {
                 public void run() {
                     // Actualiza el JLabel de ciclos de reloj en el simulador
                     simulador.valorCicloReloj.setText("Ciclos de Reloj Global: " + ciclosRelojGlobal);
+                    System.out.println("Ciclo de reloj"+ ciclosRelojGlobal);
                 }
             });
         }

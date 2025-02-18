@@ -82,6 +82,8 @@ public class Simulador extends javax.swing.JFrame {
 
     private void actualizarTabla(Queue<Proceso> cola, DefaultTableModel modelo) {
         modelo.setRowCount(0);
+        
+        if (cola.isEmpty()) return; 
         Queue<Proceso> copiaCola = new Queue<>();
 
         // Recorremos la cola sin modificarla
@@ -456,7 +458,7 @@ public class Simulador extends javax.swing.JFrame {
         jLabel1.setText("Algoritmo de planificación:");
 
         algoritmoPlanificacion.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        algoritmoPlanificacion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FCFS", "Round Robin", "SPN", "SRT", "HRRN" }));
+        algoritmoPlanificacion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FCFS", "Round Robin", "SJF", "SRTN", "HRRN" }));
         algoritmoPlanificacion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 algoritmoPlanificacionActionPerformed(evt);
@@ -1110,8 +1112,6 @@ public class Simulador extends javax.swing.JFrame {
      
         if (!colaListos.isEmpty()) {
             new Thread(() -> { // Ejecutar en un hilo separado
-                SwingUtilities.invokeLater(() -> 
-                    JOptionPane.showMessageDialog(this, "Simulación iniciada con " + numeroCPUs + " CPUs."));
                 sistemaOperativo.iniciarCPUs();
                 sistemaOperativo.ejecutarSimulacion();
             }).start();

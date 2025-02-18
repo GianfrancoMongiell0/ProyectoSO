@@ -99,13 +99,15 @@ public class PCB {
     public boolean debeBloquearse() {
         if (esIOBound) {
             ciclosEjecutadosDesdeUltimoBloqueo++;
+            // Mostrar el número de ciclos ejecutados
+            System.out.println("Ciclos ejecutados desde último bloqueo: " + ciclosEjecutadosDesdeUltimoBloqueo);
             if (ciclosEjecutadosDesdeUltimoBloqueo >= ciclosExcepcion) {
-                ciclosEjecutadosDesdeUltimoBloqueo = 0;
-                return true;
+                ciclosEjecutadosDesdeUltimoBloqueo = 0; // Reiniciar el contador
+                return true ; // Indica que el proceso debe bloquearse
             }
         }
-        return false;
-    }
+        return false; // Indica que el proceso no debe bloquearse
+}
 
     public void reiniciarContadorBloqueo() {
         ciclosEjecutadosDesdeUltimoBloqueo = 0;
