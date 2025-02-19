@@ -32,13 +32,18 @@ public class HRRN extends Planificador {
             tiempoGlobal += seleccionado.getInstruccionesRestantes();
             return seleccionado;
 
-
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             return null;
         } finally {
             mutex.release();
         }
+    }
+
+    private double calcularResponseRatio(Proceso p) {
+        int tiempoEspera = p.getPCB().getTiempoEspera();
+        int tiempoServicio = p.getTotalInstrucciones();
+        return (tiempoEspera + tiempoServicio) / (double) tiempoServicio;
     }
 
     @Override
@@ -52,12 +57,6 @@ public class HRRN extends Planificador {
         } finally {
             mutex.release();
         }
-    }
-
-    private double calcularResponseRatio(Proceso p) {
-        int tiempoEspera = tiempoGlobal - p.getPCB().getTiempoLlegada();
-        int tiempoServicio = p.getTotalInstrucciones();
-        return (tiempoEspera + tiempoServicio) / (double) tiempoServicio;
     }
 
     @Override

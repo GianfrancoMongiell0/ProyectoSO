@@ -46,7 +46,7 @@ public class Simulador extends javax.swing.JFrame {
     private DefaultTableModel modeloTablaTerminados = new DefaultTableModel(
             new Object[][]{}, new String[]{"Id", "Nombre", "Estado", "PC", "MAR"}
     );
-    
+
     public Simulador() {
         initComponents();
         ColaListos.setModel(modeloTablaListos);
@@ -73,17 +73,21 @@ public class Simulador extends javax.swing.JFrame {
         this.colaListos = colaListos;
     }
 
-       
     public void actualizarTablas() {
-        actualizarTabla(colaListos, modeloTablaListos);
-        actualizarTabla(colaBloqueados, modeloTablaBloqueados);
-        actualizarTabla(colaTerminados, modeloTablaTerminados);
+        SwingUtilities.invokeLater(() -> {
+            actualizarTabla(colaListos, modeloTablaListos);
+            actualizarTabla(colaBloqueados, modeloTablaBloqueados);
+            actualizarTabla(colaTerminados, modeloTablaTerminados);
+        });
+
     }
 
     private void actualizarTabla(Queue<Proceso> cola, DefaultTableModel modelo) {
         modelo.setRowCount(0);
-        
-        if (cola.isEmpty()) return; 
+
+        if (cola.isEmpty()) {
+            return;
+        }
         Queue<Proceso> copiaCola = new Queue<>();
 
         // Recorremos la cola sin modificarla
@@ -113,39 +117,38 @@ public class Simulador extends javax.swing.JFrame {
         }
     }
 
-
     public void actualizarEstadoCPU(int idCPU, Proceso proceso) {
         SwingUtilities.invokeLater(() -> { // Asegurar actualización en el hilo de la UI
             if (proceso == null) {
                 limpiarEstadoCPU(idCPU);
                 return;
             }
-            
+
             if (idCPU == 1) {
                 estCPU1.setText("Ejecutando");
-                idP1.setText("ID: "+String.valueOf(proceso.getPCB().getId()));
-                nombreP1.setText("Nombre: "+proceso.getPCB().getNombre());
+                idP1.setText("ID: " + String.valueOf(proceso.getPCB().getId()));
+                nombreP1.setText("Nombre: " + proceso.getPCB().getNombre());
                 statusP1.setText("Estatus: " + proceso.getPCB().getEstado().toString());
-                pcP1.setText("PC: "+ String.valueOf(proceso.getPCB().getPc()));
-                marP1.setText("MAR: "+String.valueOf(proceso.getPCB().getMar()));
+                pcP1.setText("PC: " + String.valueOf(proceso.getPCB().getPc()));
+                marP1.setText("MAR: " + String.valueOf(proceso.getPCB().getMar()));
             } else if (idCPU == 2) {
                 estCPU2.setText("Ejecutando");
-                idP2.setText("ID: " +String.valueOf(proceso.getPCB().getId()));
+                idP2.setText("ID: " + String.valueOf(proceso.getPCB().getId()));
                 nombreP2.setText("Nombre: " + proceso.getPCB().getNombre());
-                statusP2.setText("Estatus: " +proceso.getPCB().getEstado().toString());
-                pcP2.setText("PC: "+String.valueOf(proceso.getPCB().getPc()));
-                marP2.setText("MAR: "+String.valueOf(proceso.getPCB().getMar()));
+                statusP2.setText("Estatus: " + proceso.getPCB().getEstado().toString());
+                pcP2.setText("PC: " + String.valueOf(proceso.getPCB().getPc()));
+                marP2.setText("MAR: " + String.valueOf(proceso.getPCB().getMar()));
             } else if (idCPU == 3) {
                 estCPU3.setText("Ejecutando");
                 idP3.setText("ID: " + String.valueOf(proceso.getPCB().getId()));
-                nombreP3.setText("Nombre: " +proceso.getPCB().getNombre());
-                statusP3.setText("Estatus: " +proceso.getPCB().getEstado().toString());
-                pcP3.setText("PC: "+String.valueOf(proceso.getPCB().getPc()));
-                marP3.setText("MAR: "+String.valueOf(proceso.getPCB().getMar()));
+                nombreP3.setText("Nombre: " + proceso.getPCB().getNombre());
+                statusP3.setText("Estatus: " + proceso.getPCB().getEstado().toString());
+                pcP3.setText("PC: " + String.valueOf(proceso.getPCB().getPc()));
+                marP3.setText("MAR: " + String.valueOf(proceso.getPCB().getMar()));
             }
         });
     }
-    
+
     // Método para limpiar los labels cuando un CPU queda sin proceso
     public void limpiarEstadoCPU(int idCPU) {
         SwingUtilities.invokeLater(() -> {
@@ -1078,7 +1081,6 @@ public class Simulador extends javax.swing.JFrame {
         algoritmoPlan.setText("Algoritmo Actual: " + algoritmo);
         cpusAct.setText("CPUs Activos: " + numeroCPUs);
 
-        
         // Crear el planificador basado en el algoritmo seleccionado
         Planificador planificador;
         switch (algoritmo) {
@@ -1096,7 +1098,7 @@ public class Simulador extends javax.swing.JFrame {
                 break;
             case "SRTN":
                 planificador = new SRTN();
-                break;   
+                break;
             default:
                 JOptionPane.showMessageDialog(this, "Algoritmo no soportado.");
                 return;
@@ -1108,8 +1110,7 @@ public class Simulador extends javax.swing.JFrame {
         sistemaOperativo.setSimulador(this);
         sistemaOperativo.setColaBloqueados(colaBloqueados);
         sistemaOperativo.setColaTerminados(colaTerminados);
-        
-     
+
         if (!colaListos.isEmpty()) {
             new Thread(() -> { // Ejecutar en un hilo separado
                 sistemaOperativo.iniciarCPUs();

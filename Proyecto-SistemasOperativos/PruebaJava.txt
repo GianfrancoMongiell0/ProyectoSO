@@ -1,0 +1,23 @@
+a,30,false,0,0
+n,303,false,0,0
+a,21,false,0,0
+ac,212,false,0,0
+acfa,21231,false,0,0
+proceso a,322,false,0,0
+proceso b,203,false,0,0
+proceso c,134,false,0,0
+a,313,false,0,0
+b,1134,false,0,0
+c,143,false,0,0
+proceso a,302,false,0,0
+proceso b,3021,false,0,0
+proceso c,472,false,0,0
+a,20,false,0,0
+b,40,false,0,0
+c,10,false,0,0
+c,10,false,0,0
+c,10,false,0,0
+c,10,false,0,0
+c,10,false,0,0
+a,10,false,0,0
+b,20,false,0,0

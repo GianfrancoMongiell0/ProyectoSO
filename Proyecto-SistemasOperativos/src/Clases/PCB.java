@@ -19,6 +19,7 @@ public class PCB {
     private int ciclosCompletarExcepcion;
     private int ciclosEjecutadosDesdeUltimoBloqueo = 0;
     private int tiempoLlegada;
+    private int tiempoEspera;
 
     // Constructor para CPU-bound
     public PCB(String nombre) {
@@ -95,6 +96,22 @@ public class PCB {
         this.tiempoLlegada = tiempoLlegada;
     }
 
+    public int getCiclosEjecutadosDesdeUltimoBloqueo() {
+        return ciclosEjecutadosDesdeUltimoBloqueo;
+    }
+
+    public void setCiclosEjecutadosDesdeUltimoBloqueo(int ciclosEjecutadosDesdeUltimoBloqueo) {
+        this.ciclosEjecutadosDesdeUltimoBloqueo = ciclosEjecutadosDesdeUltimoBloqueo;
+    }
+
+    public int getTiempoEspera() {
+        return tiempoEspera;
+    }
+
+    public void setTiempoEspera(int tiempoEspera) {
+        this.tiempoEspera = tiempoEspera;
+    }
+
     // Métodos para manejo de bloqueo
     public boolean debeBloquearse() {
         if (esIOBound) {
@@ -102,12 +119,16 @@ public class PCB {
             // Mostrar el número de ciclos ejecutados
             System.out.println("Ciclos ejecutados desde último bloqueo: " + ciclosEjecutadosDesdeUltimoBloqueo);
             if (ciclosEjecutadosDesdeUltimoBloqueo >= ciclosExcepcion) {
-                ciclosEjecutadosDesdeUltimoBloqueo = 0; // Reiniciar el contador
-                return true ; // Indica que el proceso debe bloquearse
+                reiniciarContadorBloqueo(); // Reiniciar el contador
+                return true; // Indica que el proceso debe bloquearse
             }
         }
         return false; // Indica que el proceso no debe bloquearse
-}
+    }
+
+    public void incrementarTiempoEspera() {
+        tiempoEspera++;
+    }
 
     public void reiniciarContadorBloqueo() {
         ciclosEjecutadosDesdeUltimoBloqueo = 0;

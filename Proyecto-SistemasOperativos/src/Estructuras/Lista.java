@@ -13,7 +13,7 @@ import Clases.Proceso;
  */
 public class Lista<T> {
 
-    private Nodo head;
+    private Nodo<T> head;
     private int length;
 
     /**

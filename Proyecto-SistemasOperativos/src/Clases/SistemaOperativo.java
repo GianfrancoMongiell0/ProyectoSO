@@ -17,14 +17,13 @@ public class SistemaOperativo {
     private volatile boolean enEjecucion; // volatile para visibilidad entre hilos
     private int duracionCiclo = 1000;
     private Simulador simulador;
+    private Queue<Proceso> colaListosGlobal = new Queue<>();
 
-    public SistemaOperativo(Planificador planificador, int numCPUs,  Queue<Proceso> colaListos) {
+    public SistemaOperativo(Planificador planificador, int numCPUs, Queue<Proceso> colaListos) {
         this.planificador = planificador;
-        //this.colaBloqueados = new Queue<>();
-        //this.colaTerminados = new Queue<>();
         this.cpus = new Lista<>();
         this.enEjecucion = true;
-        
+
         // Pasar la cola de listos al planificador
         this.planificador.setColaListos(colaListos);
 
@@ -33,15 +32,20 @@ public class SistemaOperativo {
         }
     }
 
+    public Planificador getPlanificador() {
+        return this.planificador;
+    }
+
     public synchronized void setColaTerminados(Queue<Proceso> colaTerminados) {
-      this.colaTerminados = colaTerminados;
-       actualizarGUI(); // Refrescar interfaz
+        this.colaTerminados = colaTerminados;
+        actualizarGUI(); // Refrescar interfaz
     }
 
     public synchronized void setColaBloqueados(Queue<Proceso> colaBloqueados) {
         this.colaBloqueados = colaBloqueados;
         actualizarGUI(); // Refrescar interfaz
     }
+
     // Métodos sincronizados
     public synchronized void agregarProceso(Proceso proceso) {
         System.out.println("SO: Intentando agregar proceso " + proceso.getPCB().getNombre());
@@ -50,9 +54,9 @@ public class SistemaOperativo {
             planificador.agregarProceso(proceso);
             System.out.println("SO: Proceso agregado correctamente a la cola. Estado actual de la cola:");
             if (simulador != null) {
-            simulador.setColaListos(planificador.getColaListos());
-            simulador.actualizarTablas();
-        }
+                simulador.setColaListos(planificador.getColaListos());
+                simulador.actualizarTablas();
+            }
         } else {
             System.out.println("SO: Proceso rechazado porque está terminado o bloqueado.");
         }
@@ -64,6 +68,8 @@ public class SistemaOperativo {
             System.out.println("SO: No hay procesos en la cola.");
         } else {
             System.out.println("SO: Asignando proceso " + p.getPCB().getNombre());
+            p.getPCB().setEstado(PCB.Estado.RUNNING);
+            colaListosGlobal.dequeue();
             actualizarGUI();
         }
         return p;
@@ -74,8 +80,8 @@ public class SistemaOperativo {
         proceso.getPCB().setEstado(PCB.Estado.BLOCKED);
         colaBloqueados.enqueue(proceso);
         if (simulador != null) {
-        simulador.setColaBloqueados(colaBloqueados);
-        simulador.actualizarTablas();
+            simulador.setColaBloqueados(colaBloqueados);
+            simulador.actualizarTablas();
         }
         new Thread(() -> manejarDesbloqueo(proceso)).start(); // Hilo para desbloquear
     }
@@ -85,9 +91,9 @@ public class SistemaOperativo {
         proceso.getPCB().setEstado(PCB.Estado.TERMINATED);
         colaTerminados.enqueue(proceso);
         if (simulador != null) {
-        simulador.setColaTerminados(colaTerminados);
-        simulador.actualizarTablas();
-    }
+            simulador.setColaTerminados(colaTerminados);
+            simulador.actualizarTablas();
+        }
     }
 
     public void iniciarCPUs() {
@@ -101,7 +107,11 @@ public class SistemaOperativo {
     }
 
     private void manejarDesbloqueo(Proceso p) {
-        try {
+
+        colaBloqueados.dequeue();
+        colaListosGlobal.enqueue(p);
+        planificador.agregarProceso(p);
+        /*try {
             Thread.sleep(p.getPCB().getCiclosCompletarExcepcion() * duracionCiclo);
             synchronized (this) {
                 colaBloqueados.dequeue(); // Eliminar de bloqueados
@@ -110,7 +120,7 @@ public class SistemaOperativo {
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-        }
+        }*/
     }
 
     // Getters y Setters
@@ -129,7 +139,6 @@ public class SistemaOperativo {
     public Simulador getSimulador() {
         return simulador;
     }
-    
 
     public void setSimulador(Simulador simulador) {
         this.simulador = simulador;
@@ -138,10 +147,8 @@ public class SistemaOperativo {
     public Lista<CPU> getCpus() {
         return cpus;
     }
-   
 
-    
-    private void actualizarGUI() {
+    void actualizarGUI() {
         if (simulador != null) {
             System.out.println("Actualizando GUI...");
             SwingUtilities.invokeLater(() -> {
@@ -151,7 +158,6 @@ public class SistemaOperativo {
         }
     }
 
-    
     public synchronized Proceso obtenerProcesoEnEjecucion(int idCPU) {
         CPU cpu = cpus.get(idCPU - 1); // Ajustar el índice, ya que los índices en la lista son 0-based
         Proceso proceso = cpu.obtenerProcesoEnEjecucion();
@@ -164,7 +170,6 @@ public class SistemaOperativo {
         return proceso;
     }
 
-    
     public synchronized Proceso obtenerProcesoEnEjecucion() {
         for (int i = 0; i < cpus.getLength(); i++) {
             CPU cpu = cpus.get(i);
@@ -175,8 +180,7 @@ public class SistemaOperativo {
         }
         return null; // Si no hay proceso en ejecución
     }
-    
-    
+
     private int ciclosRelojGlobal = 0;
 
     public void incrementarCiclosReloj() {
@@ -189,13 +193,13 @@ public class SistemaOperativo {
                 public void run() {
                     // Actualiza el JLabel de ciclos de reloj en el simulador
                     simulador.valorCicloReloj.setText("Ciclos de Reloj Global: " + ciclosRelojGlobal);
-                    System.out.println("Ciclo de reloj"+ ciclosRelojGlobal);
+                    System.out.println("Ciclo de reloj" + ciclosRelojGlobal);
                 }
             });
         }
     }
-    
-   public void ejecutarSimulacion() { 
+
+    public void ejecutarSimulacion() {
         while (enEjecucion) {
             if (debeDetenerSimulacion()) {
                 System.out.println("Simulación detenida: No hay más procesos en ejecución.");
@@ -230,12 +234,9 @@ public class SistemaOperativo {
         }
     }
 
-
-
-    
     private boolean debeDetenerSimulacion() {
-        return planificador.getColaListos().isEmpty() && 
-               colaBloqueados.isEmpty() && 
-               obtenerProcesoEnEjecucion() == null;
+        return planificador.getColaListos().isEmpty()
+                && colaBloqueados.isEmpty()
+                && obtenerProcesoEnEjecucion() == null;
     }
 }
