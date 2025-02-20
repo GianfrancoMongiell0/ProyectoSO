@@ -5,6 +5,7 @@ import Estructuras.Queue;
 import java.util.concurrent.Semaphore;
 
 public class RoundRobin extends Planificador {
+
     public RoundRobin() {
         this.quantum = 5;
     }
@@ -13,13 +14,32 @@ public class RoundRobin extends Planificador {
     public Proceso siguienteProceso() {
         try {
             mutex.acquire();
-            return colaListos.isEmpty() ? null : colaListos.dequeue();
+            if (colaListos.isEmpty()) {
+                return null;
+            }
+
+            Proceso p = colaListos.dequeue();
+
+            if (p.getInstruccionesRestantes() > 0) {
+                colaListos.enqueue(p);
+                System.out.println("[RoundRobin] Reencolando proceso: " + p.getPCB().getNombre() + " | Instrucciones restantes: " + p.getInstruccionesRestantes());
+            } else {
+                System.out.println("[RoundRobin] Proceso completado: " + p.getPCB().getNombre());
+            }
+
+            return p;
+
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             return null;
         } finally {
             mutex.release();
         }
+    }
+
+    @Override
+    public boolean estaVacio() {
+        return colaListos.isEmpty();
     }
 
     @Override
@@ -32,10 +52,5 @@ public class RoundRobin extends Planificador {
         } finally {
             mutex.release();
         }
-    }
-
-    @Override
-    public boolean estaVacio() {
-        return colaListos.isEmpty();
     }
 }

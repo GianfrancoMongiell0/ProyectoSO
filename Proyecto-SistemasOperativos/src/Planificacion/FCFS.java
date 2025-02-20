@@ -5,17 +5,20 @@ import Estructuras.Queue;
 import java.util.concurrent.Semaphore;
 
 public class FCFS extends Planificador {
-    
+
     private final Semaphore mutex = new Semaphore(1);
 
     @Override
     public Proceso siguienteProceso() {
         try {
             mutex.acquire();
-            if (colaListos.isEmpty()) {
-                return null;
+            Proceso p = colaListos.isEmpty() ? null : colaListos.dequeue();
+
+            if (p != null) {
+                System.out.println("[FCFS] Seleccionando proceso: " + p.getPCB().getNombre() + " (Instrucciones: " + p.getTotalInstrucciones() + ")");
             }
-            return colaListos.dequeue(); // Obtiene y elimina el primer proceso
+            return p;
+
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             return null;
@@ -28,7 +31,9 @@ public class FCFS extends Planificador {
     public void agregarProceso(Proceso p) {
         try {
             mutex.acquire();
-            colaListos.enqueue(p); // Agrega el proceso al final de la cola
+            colaListos.enqueue(p);
+            System.out.println("[FCFS] Nuevo proceso en cola: " + p.getPCB().getNombre() + " | Tiempo llegada: " + p.getPCB().getTiempoLlegada());
+
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {
@@ -40,6 +45,5 @@ public class FCFS extends Planificador {
     public boolean estaVacio() {
         return colaListos.isEmpty();
     }
-    
-    
+
 }

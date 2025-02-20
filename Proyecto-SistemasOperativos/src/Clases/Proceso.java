@@ -45,7 +45,7 @@ public class Proceso {
      * @return true si debe bloquearse, false en caso contrario.
      */
     public boolean debeBloquearse() {
-        System.out.println("DEBE BLOQUEARSE");
+        //System.out.println("DEBE BLOQUEARSE");
         return pcb.debeBloquearse() ;
     }
 

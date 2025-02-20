@@ -5,12 +5,14 @@
 package Estructuras;
 
 import Clases.Proceso;
+import Estructuras.Nodo;
 
 /**
  *
  * @author alejandra y Gianfranco
  * @param <T>
  */
+
 public class Lista<T> {
 
     private Nodo head;
@@ -193,6 +195,24 @@ public class Lista<T> {
         return actual.getData();
     }
 
+    public int indexOf(T elemento) {
+        if (isEmpty()) {
+            return -1;
+        }
+
+        Nodo<T> actual = head;
+        int indice = 0;
+        while (actual != null) {
+            if (actual.getData().equals(elemento)) {
+                return indice;
+            }
+            actual = actual.getNext();
+            indice++;
+        }
+        return -1; // No encontrado
+    }
+
+    
     /**
      * Imprimir lista Metodo que permite Imprimir la lista
      */

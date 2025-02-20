@@ -1,29 +1,32 @@
 package planificacion;
 
 import Clases.Proceso;
-import Estructuras.Lista;
-import java.util.concurrent.Semaphore;
 
 public class SJF extends Planificador {
+
     @Override
     public Proceso siguienteProceso() {
         try {
             mutex.acquire();
-            if (colaListos.isEmpty()) {
+            if (listaListos.isEmpty()) {
                 return null;
             }
 
-            Proceso mejorProceso = colaListos.dequeue();
-            int length = colaListos.getLength();
-            for (int i = 0; i < length; i++) {
-                Proceso p = colaListos.dequeue();
-                if (p.getInstruccionesRestantes() < mejorProceso.getInstruccionesRestantes()) {
-                    colaListos.enqueue(mejorProceso);
+            // Buscar proceso con menor tiempo
+            Proceso mejorProceso = listaListos.get(0);
+            int minInstrucciones = mejorProceso.getTotalInstrucciones();
+
+            for (int i = 1; i < listaListos.getLength(); i++) {
+                Proceso p = listaListos.get(i);
+                if (p.getTotalInstrucciones() < minInstrucciones) {
                     mejorProceso = p;
-                } else {
-                    colaListos.enqueue(p);
+                    minInstrucciones = p.getTotalInstrucciones();
                 }
             }
+
+            listaListos.deleteIndex(listaListos.indexOf(mejorProceso));
+            System.out.println("[SJF] Proceso seleccionado: " + mejorProceso.getPCB().getNombre() + " | Duración: " + mejorProceso.getTotalInstrucciones() + " ciclos");
+
             return mejorProceso;
 
         } catch (InterruptedException e) {
@@ -38,7 +41,7 @@ public class SJF extends Planificador {
     public void agregarProceso(Proceso p) {
         try {
             mutex.acquire();
-            colaListos.enqueue(p);
+            listaListos.insertLast(p);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {
@@ -48,6 +51,6 @@ public class SJF extends Planificador {
 
     @Override
     public boolean estaVacio() {
-        return colaListos.isEmpty();
+        return listaListos.isEmpty();
     }
 }
