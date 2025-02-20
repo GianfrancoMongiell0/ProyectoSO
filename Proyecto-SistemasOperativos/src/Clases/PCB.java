@@ -14,7 +14,7 @@ public class PCB {
     private final String nombre;
     private int pc;
     private int mar;
-    private final boolean esIOBound;
+    private  boolean esIOBound;
     private int ciclosExcepcion;
     private int ciclosCompletarExcepcion;
     private int ciclosEjecutadosDesdeUltimoBloqueo = 0;
@@ -71,6 +71,12 @@ public class PCB {
         mar++;
     }
 
+    public void setEsIOBound(boolean esIOBound) {
+        this.esIOBound = esIOBound;
+    }
+    
+    
+
     public boolean esIOBound() {
         return esIOBound;
     }
@@ -100,11 +106,13 @@ public class PCB {
         if (esIOBound) {
             ciclosEjecutadosDesdeUltimoBloqueo++;
             // Mostrar el número de ciclos ejecutados
-            System.out.println("Ciclos ejecutados desde último bloqueo: " + ciclosEjecutadosDesdeUltimoBloqueo);
-            if (ciclosEjecutadosDesdeUltimoBloqueo >= ciclosExcepcion) {
+            System.out.println("Ciclos ejecutados desde ultimo bloqueo: " + ciclosEjecutadosDesdeUltimoBloqueo);
+            if (ciclosEjecutadosDesdeUltimoBloqueo > ciclosExcepcion) {
                 ciclosEjecutadosDesdeUltimoBloqueo = 0; // Reiniciar el contador
+                ciclosExcepcion = 0 ;
                 return true ; // Indica que el proceso debe bloquearse
             }
+                return false;
         }
         return false; // Indica que el proceso no debe bloquearse
 }

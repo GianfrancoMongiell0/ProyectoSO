@@ -46,7 +46,7 @@ public class SistemaOperativo {
     public synchronized void agregarProceso(Proceso proceso) {
         System.out.println("SO: Intentando agregar proceso " + proceso.getPCB().getNombre());
 
-        if (!proceso.estaTerminado() && !proceso.debeBloquearse()) {
+        if (!proceso.estaTerminado() ) {
             planificador.agregarProceso(proceso);
             System.out.println("SO: Proceso agregado correctamente a la cola. Estado actual de la cola:");
             if (simulador != null) {
@@ -61,7 +61,7 @@ public class SistemaOperativo {
     public synchronized Proceso obtenerSiguienteProceso() {
         Proceso p = planificador.siguienteProceso();
         if (p == null) {
-            System.out.println("SO: No hay procesos en la cola.");
+          //  System.out.println("SO: No hay procesos en la cola.");
         } else {
             System.out.println("SO: Asignando proceso " + p.getPCB().getNombre());
             actualizarGUI();
@@ -74,9 +74,9 @@ public class SistemaOperativo {
         proceso.getPCB().setEstado(PCB.Estado.BLOCKED);
         colaBloqueados.enqueue(proceso);
         if (simulador != null) {
-        simulador.setColaBloqueados(colaBloqueados);
-        simulador.actualizarTablas();
-        }
+            simulador.setColaBloqueados(colaBloqueados);
+            simulador.actualizarTablas();
+            }
         new Thread(() -> manejarDesbloqueo(proceso)).start(); // Hilo para desbloquear
     }
 
@@ -106,7 +106,11 @@ public class SistemaOperativo {
             synchronized (this) {
                 colaBloqueados.dequeue(); // Eliminar de bloqueados
                 p.getPCB().reiniciarContadorBloqueo();
-                agregarProceso(p); // Reinsertar en listos
+               // Solo agregar el proceso si no ha terminado
+            if (!p.estaTerminado()) {
+                p.getPCB().setEsIOBound(false);
+                agregarProceso(p); // Volver a la cola de listos
+            }
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

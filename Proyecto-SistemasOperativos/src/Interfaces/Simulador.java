@@ -35,6 +35,7 @@ public class Simulador extends javax.swing.JFrame {
     private Queue<Proceso> colaBloqueados = new Queue<>();
     private Queue<Proceso> colaTerminados = new Queue<>();
     private SistemaOperativo sistemaOperativo;
+    private JLabel[] estadosCPU;
     private DefaultTableModel modeloTablaListos = new DefaultTableModel(
             new Object[][]{}, new String[]{"Id", "Nombre", "Estado", "PC", "MAR"}
     );
@@ -173,6 +174,7 @@ public class Simulador extends javax.swing.JFrame {
             }
         });
     }
+
 
     /**
      * This method is called from within the constructor to initialize the form.

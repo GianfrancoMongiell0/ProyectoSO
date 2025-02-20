@@ -53,6 +53,12 @@ public class Proceso {
         return pcb;
     }
 
+    public void setInstruccionesRestantes(int instruccionesRestantes) {
+        this.instruccionesRestantes = instruccionesRestantes;
+    }
+    
+    
+
     public int getTotalInstrucciones() {
         return totalInstrucciones;
     }
