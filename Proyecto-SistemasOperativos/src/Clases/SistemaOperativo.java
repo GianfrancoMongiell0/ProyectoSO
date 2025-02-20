@@ -112,6 +112,7 @@ public class SistemaOperativo {
                // Solo agregar el proceso si no ha terminado
             if (!p.estaTerminado()) {
                 p.getPCB().setEsIOBound(false);
+                p.getPCB().setEstado(PCB.Estado.READY);
                 agregarProceso(p); // Volver a la cola de listos
             }
             }

@@ -42,7 +42,7 @@ public class LectorEscritorTxt {
     }
 
     // Método para escribir o modificar el archivo
-    public static void escribirArchivo(String rutaArchivo, String texto, boolean append) {
+    public  void escribirArchivo(String rutaArchivo, String texto, boolean append) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(rutaArchivo, append))) {
             bw.write(texto);
             bw.newLine();
