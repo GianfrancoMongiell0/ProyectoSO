@@ -16,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -206,6 +207,9 @@ public class Simulador extends javax.swing.JFrame {
         cargarProceso = new javax.swing.JButton();
         jLabel14 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
+        cargarProceso1 = new javax.swing.JButton();
+        jLabel20 = new javax.swing.JLabel();
+        jLabel21 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -409,7 +413,7 @@ public class Simulador extends javax.swing.JFrame {
         cargarProceso.setBackground(new java.awt.Color(122, 186, 143));
         cargarProceso.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         cargarProceso.setForeground(new java.awt.Color(255, 255, 255));
-        cargarProceso.setText("Cargar procesos de txt");
+        cargarProceso.setText("Cargar procesos escritos en txt");
         cargarProceso.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cargarProcesoActionPerformed(evt);
@@ -419,12 +423,32 @@ public class Simulador extends javax.swing.JFrame {
         jLabel14.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
         jLabel14.setForeground(new java.awt.Color(255, 255, 255));
         jLabel14.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel14.setText("Se cargaran 20 procesos que estaban guardados en un txt ");
+        jLabel14.setText("Se cargaran procesos que estaban guardados en un txt ");
 
         jLabel19.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
         jLabel19.setForeground(new java.awt.Color(255, 255, 255));
         jLabel19.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel19.setText("y la última configuración del simulador");
+
+        cargarProceso1.setBackground(new java.awt.Color(122, 186, 143));
+        cargarProceso1.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        cargarProceso1.setForeground(new java.awt.Color(255, 255, 255));
+        cargarProceso1.setText("Cargar procesos aleatorios");
+        cargarProceso1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cargarProceso1ActionPerformed(evt);
+            }
+        });
+
+        jLabel20.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        jLabel20.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel20.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel20.setText("Se cargaran 20 procesos que se generan aleatoriamente");
+
+        jLabel21.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        jLabel21.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel21.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel21.setText("y la última configuración del simulador");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -435,11 +459,17 @@ public class Simulador extends javax.swing.JFrame {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel19, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel19, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(250, Short.MAX_VALUE))
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(310, 310, 310)
-                .addComponent(cargarProceso, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(307, 307, 307)
+                .addComponent(cargarProceso1, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(292, 292, 292)
+                .addComponent(cargarProceso, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
@@ -453,7 +483,13 @@ public class Simulador extends javax.swing.JFrame {
                 .addComponent(jLabel14)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel19)
-                .addContainerGap(242, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(cargarProceso1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel20)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel21)
+                .addContainerGap(155, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Proceso", jPanel4);
@@ -1159,6 +1195,51 @@ public class Simulador extends javax.swing.JFrame {
 
     }//GEN-LAST:event_botonSaveconfigActionPerformed
 
+    private void cargarProceso1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargarProceso1ActionPerformed
+        Random random = new Random();   
+        for (int i = 0; i < 20; i++) {
+            // Generar valores aleatorios para cada atributo del proceso
+            String nombre = "PROCESO-" + i; 
+            int instrucciones = random.nextInt(10) + 5; 
+            boolean esCPUBound = random.nextBoolean(); // CPU-bound o I/O-bound
+
+            Proceso proceso;
+            if (esCPUBound) {
+                // Si es CPU-bound, se usa el constructor sin ciclos de excepción/resolución
+                proceso = new Proceso(nombre, instrucciones);
+                System.out.println("Proceso generado (CPU-bound): " + nombre);
+            } else {
+                // Si es I/O-bound, se generan ciclos de excepción y resolución
+                int ciclosExcepcion = random.nextInt(5) + 1; // Entre 1 y 5 ciclos de excepción
+                int ciclosResolucion = random.nextInt(5) + 1; // Entre 1 y 5 ciclos de resolución
+                proceso = new Proceso(nombre, instrucciones, ciclosExcepcion, ciclosResolucion);
+                System.out.println("Proceso generado (I/O-bound): " + nombre);
+            }
+
+            // Agregar el proceso a la cola de listos y actualizar la tabla
+            colaListos.enqueue(proceso);
+            agregarProceso(proceso);
+        }
+                // Leer la configuración del simulador desde configuracion.txt
+    try (BufferedReader br = new BufferedReader(new FileReader("configuracion.txt"))) {
+        String linea = br.readLine();
+        if (linea != null) {
+            String[] config = linea.split(",");
+            algoritmoPlanificacion.setSelectedItem(config[0]); // Algoritmo
+            if (config[1].equals("2")) {
+                cpus2.setSelected(true);
+            } else {
+                cpus3.setSelected(true);
+            }
+            duracionCE.setValue(Integer.parseInt(config[2])); // Duración
+            jComboBox1.setSelectedItem(config[3].equals("true") ? "ms" : "s"); // Unidad
+        }
+    } catch (IOException ex) {
+        System.out.println("No se encontró el archivo de configuración.");
+    }
+    
+    }//GEN-LAST:event_cargarProceso1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1206,6 +1287,7 @@ public class Simulador extends javax.swing.JFrame {
     private javax.swing.JSpinner cantCiclosSE;
     private javax.swing.JTextField cantInstrucciones;
     private javax.swing.JButton cargarProceso;
+    private javax.swing.JButton cargarProceso1;
     private javax.swing.JLabel ciclosdereloj;
     private javax.swing.JRadioButton cpus2;
     private javax.swing.JRadioButton cpus3;
@@ -1236,6 +1318,8 @@ public class Simulador extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;

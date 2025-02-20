@@ -1,1 +1,1 @@
-FCFS,2,5,false
+FCFS,2,1,false
