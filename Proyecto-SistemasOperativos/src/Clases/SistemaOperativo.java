@@ -5,6 +5,7 @@ import Estructuras.Lista;
 import Estructuras.Nodo;
 import Estructuras.Queue;
 import Interfaces.Simulador;
+import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import planificacion.Planificador;
 
@@ -17,19 +18,21 @@ public class SistemaOperativo {
     private volatile boolean enEjecucion; // volatile para visibilidad entre hilos
     private int duracionCiclo = 1000;
     private Simulador simulador;
-
-    public SistemaOperativo(Planificador planificador, int numCPUs,  Queue<Proceso> colaListos) {
+    private JLabel[] labelsEstadoCPUs; 
+    
+    public SistemaOperativo(Planificador planificador, int numCPUs,  Queue<Proceso> colaListos, JLabel[] labelsEstadoCPUs) {
         this.planificador = planificador;
         //this.colaBloqueados = new Queue<>();
         //this.colaTerminados = new Queue<>();
         this.cpus = new Lista<>();
         this.enEjecucion = true;
+        this.labelsEstadoCPUs = labelsEstadoCPUs; 
         
         // Pasar la cola de listos al planificador
         this.planificador.setColaListos(colaListos);
 
         for (int i = 0; i < numCPUs; i++) {
-            cpus.insertLast(new CPU(this, i + 1));
+            cpus.insertLast(new CPU(this, i + 1, labelsEstadoCPUs[i]));
         }
     }
 

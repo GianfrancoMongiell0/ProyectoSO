@@ -1,0 +1,17 @@
+P1,10,false,0,0
+P2,10,false,0,0
+P3,4,false,0,0
+P1,10,true,2,2
+P2,5,false,0,0
+P3,4,false,0,0
+P1,10,true,4,3
+P2,10,false,0,0
+P3,3,false,0,0
+p1,10,true,3,2
+p2,5,false,0,0
+p1,10,true,4,3
+p2,5,false,0,0
+p1,2,true,1,1
+p2,10,false,0,0
+p1,20,true,4,6
+p3,6,true,2,2

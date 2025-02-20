@@ -694,7 +694,7 @@ public class Simulador extends javax.swing.JFrame {
                         .addGap(68, 68, 68)
                         .addComponent(idP1))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(53, 53, 53)
+                        .addContainerGap()
                         .addComponent(enEjP1)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -770,7 +770,7 @@ public class Simulador extends javax.swing.JFrame {
                         .addGap(68, 68, 68)
                         .addComponent(idP2))
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGap(51, 51, 51)
+                        .addContainerGap()
                         .addComponent(enEjP2)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -845,7 +845,7 @@ public class Simulador extends javax.swing.JFrame {
                         .addGap(68, 68, 68)
                         .addComponent(idP3))
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGap(51, 51, 51)
+                        .addContainerGap()
                         .addComponent(enEjP3)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -954,7 +954,7 @@ public class Simulador extends javax.swing.JFrame {
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1103,9 +1103,9 @@ public class Simulador extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Algoritmo no soportado.");
                 return;
         }
-
+        JLabel[] labelsEstado = {enEjP1, enEjP2, enEjP3};
         // Crear el sistema operativo y configurar CPUs
-        sistemaOperativo = new SistemaOperativo(planificador, numeroCPUs, colaListos);
+        sistemaOperativo = new SistemaOperativo(planificador, numeroCPUs, colaListos, labelsEstado);
         sistemaOperativo.setDuracionCiclo(duracionMs);
         sistemaOperativo.setSimulador(this);
         sistemaOperativo.setColaBloqueados(colaBloqueados);
