@@ -50,6 +50,7 @@ public class Simulador extends javax.swing.JFrame {
     
     public Simulador() {
         initComponents();
+        setTitle("Simulador de planificacion de procesos");
         ColaListos.setModel(modeloTablaListos);
         ColaBloqueados.setModel(modeloTablaBloqueados);
         ColaTerminados.setModel(modeloTablaTerminados);
