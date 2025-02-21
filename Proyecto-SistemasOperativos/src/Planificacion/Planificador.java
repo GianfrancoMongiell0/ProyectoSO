@@ -5,6 +5,8 @@ import Estructuras.Queue;
 import java.util.concurrent.Semaphore;
 
 public abstract class Planificador {
+
+    protected int tiempoGlobal;
     protected Queue<Proceso> colaListos = new Queue<>();
     protected Semaphore mutex = new Semaphore(1);
     protected int quantum;
@@ -14,15 +16,20 @@ public abstract class Planificador {
     }
 
     public abstract Proceso siguienteProceso();
+
     public abstract void agregarProceso(Proceso p);
+
     public abstract boolean estaVacio();
 
     public int getQuantum() {
         return quantum;
     }
-    
+
     public Queue<Proceso> getColaListos() {
         return colaListos;
     }
-    
+
+    public void incrementarTiempoGlobal() {
+        tiempoGlobal++;
+    }
 }
