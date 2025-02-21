@@ -665,7 +665,7 @@
                         <StringItem index="0" value="FCFS"/>
                         <StringItem index="1" value="Round Robin"/>
                         <StringItem index="2" value="SJF"/>
-                        <StringItem index="3" value="SRTN"/>
+                        <StringItem index="3" value="SRT"/>
                         <StringItem index="4" value="HRRN"/>
                       </StringArray>
                     </Property>

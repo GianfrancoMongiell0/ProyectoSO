@@ -506,7 +506,7 @@ public class Simulador extends javax.swing.JFrame {
         jLabel1.setText("Algoritmo de planificación:");
 
         algoritmoPlanificacion.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        algoritmoPlanificacion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FCFS", "Round Robin", "SJF", "SRTN", "HRRN" }));
+        algoritmoPlanificacion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FCFS", "Round Robin", "SJF", "SRT", "HRRN" }));
         algoritmoPlanificacion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 algoritmoPlanificacionActionPerformed(evt);
@@ -1038,7 +1038,7 @@ public class Simulador extends javax.swing.JFrame {
     }//GEN-LAST:event_cpus2ActionPerformed
 
     private void algoritmoPlanificacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_algoritmoPlanificacionActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_algoritmoPlanificacionActionPerformed
 
     private void crearProcesoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearProcesoActionPerformed
@@ -1168,8 +1168,8 @@ public class Simulador extends javax.swing.JFrame {
             case "HRRN":
                 planificador = new HRRN();
                 break;
-            case "SRTN":
-                planificador = new SRTN();
+            case "SRT":
+                planificador = new SRT();
                 break;   
             default:
                 JOptionPane.showMessageDialog(this, "Algoritmo no soportado.");

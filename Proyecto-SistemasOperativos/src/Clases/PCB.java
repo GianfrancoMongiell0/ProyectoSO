@@ -74,8 +74,23 @@ public class PCB {
     public void setEsIOBound(boolean esIOBound) {
         this.esIOBound = esIOBound;
     }
-    
-    
+
+    public int getCiclosEjecutadosDesdeUltimoBloqueo() {
+        return ciclosEjecutadosDesdeUltimoBloqueo;
+    }
+
+    public void setCiclosExcepcion(int ciclosExcepcion) {
+        this.ciclosExcepcion = ciclosExcepcion;
+    }
+
+    public void setCiclosCompletarExcepcion(int ciclosCompletarExcepcion) {
+        this.ciclosCompletarExcepcion = ciclosCompletarExcepcion;
+    }
+
+    public void setCiclosEjecutadosDesdeUltimoBloqueo(int ciclosEjecutadosDesdeUltimoBloqueo) {
+        this.ciclosEjecutadosDesdeUltimoBloqueo = ciclosEjecutadosDesdeUltimoBloqueo;
+    }
+   
 
     public boolean esIOBound() {
         return esIOBound;

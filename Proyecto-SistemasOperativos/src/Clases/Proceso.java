@@ -61,7 +61,9 @@ public class Proceso {
         this.instruccionesRestantes = instruccionesRestantes;
     }
     
-    
+     public int getTiempoRestante() {
+        return totalInstrucciones - getInstruccionesEjecutadas();
+    }
 
     public int getTotalInstrucciones() {
         return totalInstrucciones;
@@ -74,6 +76,8 @@ public class Proceso {
     public boolean estaTerminado() {
         return terminado;
     }
+    
+    
 
     @Override
     public String toString() {

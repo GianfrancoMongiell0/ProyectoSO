@@ -4,7 +4,7 @@ import Clases.Proceso;
 import Estructuras.Lista;
 import java.util.concurrent.Semaphore;
 
-public class SRTN extends Planificador {
+public class SRT extends Planificador {
     @Override
     public Proceso siguienteProceso() {
         try {

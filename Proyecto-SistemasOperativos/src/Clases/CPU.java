@@ -1,5 +1,6 @@
 package Clases;
 
+import java.util.concurrent.Semaphore;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
@@ -9,12 +10,14 @@ public class CPU extends Thread {
     private Proceso procesoEnEjecucion;
     private JLabel labelEstado;
     private int quantumRestante;
-
+    private Semaphore semaforo;
+    
     public CPU(int id, SistemaOperativo so, JLabel labelEstado) {
         this.id = id;
         this.so = so;
         this.labelEstado = labelEstado;
         this.procesoEnEjecucion = null;
+        this.semaforo = new Semaphore(1); 
     }
     
      public Proceso obtenerProcesoEnEjecucion() {
@@ -71,6 +74,38 @@ public class CPU extends Thread {
                             }
                         }
                         break;
+                    case "SRT":
+                    while (proceso.getInstruccionesRestantes() > 0) {
+                        semaforo.acquire();
+                        if (!so.getPlanificador().getColaListos().isEmpty() 
+                                && proceso.getTiempoRestante() > so.getPlanificador().getColaListos().peek().getTiempoRestante()) {
+                            proceso.getPCB().setEstado(PCB.Estado.READY);
+                            so.agregarProceso(proceso);
+                            proceso = so.getPlanificador().getColaListos().dequeue();
+                            proceso.getPCB().setEstado(PCB.Estado.RUNNING);
+                        }
+                        semaforo.release();
+
+                        Thread.sleep(so.getDuracionCiclo());
+                        proceso.ejecutarInstruccion();
+
+                        if (proceso.debeBloquearse()) {
+                            proceso.getPCB().setEstado(PCB.Estado.BLOCKED);
+                            so.moverAColaBloqueados(proceso);
+                            this.liberarProceso();
+                            break;
+                        }
+
+                        if (proceso.getInstruccionesRestantes() <= 0) {
+                            proceso.getPCB().setEstado(PCB.Estado.TERMINATED);
+                            so.moverAColaTerminados(proceso);
+                            this.liberarProceso();
+                            break;
+                        }
+                    }
+                    break;
+  
+                     
                     default:
                         ejecutarProceso(proceso);
                         break;
