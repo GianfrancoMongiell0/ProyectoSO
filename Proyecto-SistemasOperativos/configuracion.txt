@@ -1,1 +1,1 @@
-SRT,2,3,false
+Round Robin,2,5,false

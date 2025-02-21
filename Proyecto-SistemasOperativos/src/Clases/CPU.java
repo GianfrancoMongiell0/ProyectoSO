@@ -1,9 +1,9 @@
 package Clases;
 
-import planificacion.Planificador;
-import planificacion.HRRN; // Asegúrate de importar HRRN si vas a usar tiempoGlobal de ahí.
+import planificacion.HRRN; // Import para HRRN (si se usa tiempoGlobal de HRRN)
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
+import planificacion.Planificador;
 
 public class CPU extends Thread {
 
@@ -12,14 +12,15 @@ public class CPU extends Thread {
     private Proceso procesoEnEjecucion;
     private JLabel labelEstado;
     private int quantumRestante;
-    private java.util.concurrent.Semaphore semaforo;
+    private java.util.concurrent.Semaphore semaforo; // Semáforo para control de preemption en SRT
 
     public CPU(int id, SistemaOperativo so, JLabel labelEstado) {
         this.id = id;
         this.so = so;
         this.labelEstado = labelEstado;
         this.procesoEnEjecucion = null;
-        this.semaforo = new java.util.concurrent.Semaphore(1);
+        this.quantumRestante = 0; // Inicializar quantumRestante
+        this.semaforo = new java.util.concurrent.Semaphore(1); // Inicializar semáforo
     }
 
     public Proceso obtenerProcesoEnEjecucion() {
@@ -35,7 +36,7 @@ public class CPU extends Thread {
                 Proceso proceso = so.obtenerSiguienteProceso();
 
                 if (proceso == null) {
-                    Thread.sleep(100); // Espera no activa
+                    Thread.sleep(100); // Espera no activa si no hay procesos listos
                     continue;
                 }
 
@@ -48,164 +49,149 @@ public class CPU extends Thread {
                         quantumRestante = so.getPlanificador().getQuantum();
                         while (proceso.getInstruccionesRestantes() > 0) {
                             Thread.sleep(so.getDuracionCiclo());
-
                             proceso.ejecutarInstruccion();
-                            // **Incrementar tiempoGlobal en cada ciclo de CPU para Round Robin**
-                            incrementarTiempoGlobalSimulacion();
+                            incrementarTiempoGlobalSimulacion(); // Incremento de tiempo global para Round Robin
 
                             if (proceso.debeBloquearse()) {
-                                proceso.getPCB().setEstado(PCB.Estado.BLOCKED);
-                                so.moverAColaBloqueados(proceso);
-                                this.liberarProceso();
+                                procesoABloqueado(proceso);
                                 break;
                             }
-
-                            quantumRestante--;
-
                             if (proceso.estaTerminado()) {
-                                proceso.getPCB().setEstado(PCB.Estado.TERMINATED);
-                                so.moverAColaTerminados(proceso);
-                                this.liberarProceso();
+                                procesoATerminado(proceso);
                                 break;
                             }
-
+                            quantumRestante--;
                             if (quantumRestante <= 0) {
-                                proceso.getPCB().setEstado(PCB.Estado.READY);
-                                so.agregarProceso(proceso);
-                                this.liberarProceso();
+                                procesoListoParaReencolar(proceso);
                                 break;
                             }
                         }
                         break;
+
                     case "HRRN":
                         while (proceso.getInstruccionesRestantes() > 0) {
-                            Thread.sleep(so.getDuracionCiclo()); // Simula la ejecución de una instrucción
-                            proceso.ejecutarInstruccion(); // Ejecuta una instrucción del proceso
-                            // **Incrementar tiempoGlobal en cada ciclo de CPU para HRRN**
-                            incrementarTiempoGlobalSimulacion();
+                            Thread.sleep(so.getDuracionCiclo());
+                            proceso.ejecutarInstruccion();
+                            incrementarTiempoGlobalSimulacion(); // Incremento de tiempo global para HRRN
 
-                            // Verifica si el proceso debe bloquearse
                             if (proceso.debeBloquearse()) {
-                                proceso.getPCB().setEstado(PCB.Estado.BLOCKED);
-                                so.moverAColaBloqueados(proceso);
-                                this.liberarProceso();
+                                procesoABloqueado(proceso);
                                 break;
                             }
-
-                            // Verifica si el proceso ha terminado
                             if (proceso.estaTerminado()) {
-                                proceso.getPCB().setEstado(PCB.Estado.TERMINATED);
-                                so.moverAColaTerminados(proceso);
-                                this.liberarProceso();
+                                procesoATerminado(proceso);
                                 break;
                             }
                         }
                         break;
 
-                    case "SFJ":
-
+                    case "SJF": // SFJ - No preemptivo
                         while (proceso.getInstruccionesRestantes() > 0) {
-                            Thread.sleep(so.getDuracionCiclo()); // Simula la ejecución de una instrucción
-                            proceso.ejecutarInstruccion(); // Ejecuta una instrucción del proceso
-                            // **Incrementar tiempoGlobal en cada ciclo de CPU para SFJ - Aunque SJF no lo use directamente, se mantiene por consistencia si otros planificadores en tu sistema lo usan.**
-                            incrementarTiempoGlobalSimulacion();
+                            Thread.sleep(so.getDuracionCiclo());
+                            proceso.ejecutarInstruccion();
+                            incrementarTiempoGlobalSimulacion(); // Incremento de tiempo global para SJF
 
-                            // Verifica si el proceso debe bloquearse
                             if (proceso.debeBloquearse()) {
-                                proceso.getPCB().setEstado(PCB.Estado.BLOCKED);
-                                so.moverAColaBloqueados(proceso);
-                                this.liberarProceso();
+                                procesoABloqueado(proceso);
                                 break;
                             }
-
-                            // Verifica si el proceso ha terminado
                             if (proceso.estaTerminado()) {
-                                proceso.getPCB().setEstado(PCB.Estado.TERMINATED);
-                                so.moverAColaTerminados(proceso);
-                                this.liberarProceso();
+                                procesoATerminado(proceso);
                                 break;
                             }
                         }
                         break;
 
-                    case "SRT":
+                    case "SRT": // SRT - Preemptivo
                         while (proceso.getInstruccionesRestantes() > 0) {
-                            try { // **Añadido bloque try-catch dentro del bucle para Thread.sleep()**
+                            try {
                                 Thread.sleep(so.getDuracionCiclo());
                             } catch (InterruptedException e) {
                                 Thread.currentThread().interrupt();
-                                break; // Importante: salir del bucle si el thread es interrumpido
+                                break;
                             }
 
                             proceso.ejecutarInstruccion();
-                            // **Incrementar tiempoGlobal en cada ciclo de CPU para SRT**
-                            incrementarTiempoGlobalSimulacion();
+                            incrementarTiempoGlobalSimulacion(); // Incremento de tiempo global para SRT
 
-                            if (proceso.debeBloquearse()) {
-                                proceso.getPCB().setEstado(PCB.Estado.BLOCKED);
-                                so.moverAColaBloqueados(proceso);
-                                this.liberarProceso();
-                                break;
-                            }
-
-                            if (proceso.estaTerminado()) {
-                                proceso.getPCB().setEstado(PCB.Estado.TERMINATED);
-                                so.moverAColaTerminados(proceso);
-                                this.liberarProceso();
-                                break;
-                            }
-
-                            // **Lógica de Preemption de SRT:**
-                            try { // **Bloque try-finally para asegurar liberación del semáforo**
+                            // Lógica de Preemption SRT:
+                            try {
                                 semaforo.acquire();
                                 if (!so.getPlanificador().getColaListos().isEmpty()) {
                                     Proceso procesoEnColaListos = so.getPlanificador().getColaListos().peek();
-                                    if (proceso.getInstruccionesRestantes() > procesoEnColaListos.getInstruccionesRestantes()) {
-                                        proceso.getPCB().setEstado(PCB.Estado.READY);
-                                        so.agregarProceso(proceso);
-                                        this.liberarProceso(); // Importante liberar el proceso ANTES de obtener el siguiente
-                                        semaforo.release(); // Liberar el semáforo ANTES de retornar
-                                        break; // **Salida *inmediata* del bucle debido a preemption**
+                                    if (procesoEnColaListos != null && proceso.getInstruccionesRestantes() > procesoEnColaListos.getInstruccionesRestantes()) {
+                                        System.out.println("CPU " + id + ": Preemption! Proceso " + proceso.getNombre() + " preempted por " + procesoEnColaListos.getNombre()); // Mensaje de preemption
+                                        procesoListoParaReencolar(proceso);
+                                        semaforo.release();
+                                        break; // Salida inmediata del bucle por preemption
                                     }
                                 }
                             } catch (InterruptedException e) {
                                 Thread.currentThread().interrupt();
-                                break; // Salir si el thread es interrumpido durante acquire()
+                                break;
                             } finally {
-                                semaforo.release(); // Asegurar que el semáforo se libere siempre
+                                semaforo.release();
                             }
 
-                            // **No hacer 'continue' aquí dentro del 'if' de preemption. Si no hubo preemption, el bucle sigue normalmente.**
+                            if (proceso.debeBloquearse()) {
+                                procesoABloqueado(proceso);
+                                break;
+                            }
+                            if (proceso.estaTerminado()) {
+                                procesoATerminado(proceso);
+                                break;
+                            }
+                            // No 'continue' aquí dentro del 'if' de preemption. Si no hubo preemption, el bucle sigue normal.
                         }
                         break;
 
-                    default:
-                        ejecutarProceso(proceso);
+                    default: // FCFS y otras políticas no especificadas explícitamente
+                        ejecutarProceso(proceso); // Lógica por defecto para FCFS (no preemptivo)
                         break;
                 }
-                procesoEnEjecucion = null;
+                liberarProceso(); // CPU libre después de ejecutar el proceso (o ser preemptado)
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }
+        System.out.println("CPU " + id + " ha terminado."); // Mensaje al terminar el hilo de CPU
     }
 
-    private void ejecutarProceso(Proceso proceso) throws InterruptedException {
+    private void ejecutarProceso(Proceso proceso) throws InterruptedException { // Para políticas como FCFS
         while (!proceso.estaTerminado() && !proceso.debeBloquearse()) {
             actualizarEstado("Ejecutando: Programa de Usuario");
             proceso.ejecutarInstruccion();
             Thread.sleep(so.getDuracionCiclo());
-            // **Incrementar tiempoGlobal en cada ciclo de CPU para políticas no RR, HRRN, SRT, SFJ**
-            incrementarTiempoGlobalSimulacion();
+            incrementarTiempoGlobalSimulacion(); // Incremento de tiempo global para FCFS
         }
         if (proceso.estaTerminado()) {
-            so.moverAColaTerminados(proceso);
+            procesoATerminado(proceso);
         } else if (proceso.debeBloquearse()) {
-            so.moverAColaBloqueados(proceso);
+            procesoABloqueado(proceso);
         } else {
-            so.agregarProceso(proceso);
+            procesoListoParaReencolar(proceso); // Reencolar si no terminó ni se bloqueó (FCFS no preemptivo)
         }
     }
+
+
+    private void procesoListoParaReencolar(Proceso proceso) {
+        proceso.getPCB().setEstado(PCB.Estado.READY);
+        so.agregarProceso(proceso);
+        liberarProceso();
+    }
+
+    private void procesoATerminado(Proceso proceso) {
+        proceso.getPCB().setEstado(PCB.Estado.TERMINATED);
+        so.moverAColaTerminados(proceso);
+        liberarProceso();
+    }
+
+    private void procesoABloqueado(Proceso proceso) {
+        proceso.getPCB().setEstado(PCB.Estado.BLOCKED);
+        so.moverAColaBloqueados(proceso);
+        liberarProceso();
+    }
+
 
     private void liberarProceso() {
         procesoEnEjecucion = null;
@@ -216,14 +202,12 @@ public class CPU extends Thread {
         SwingUtilities.invokeLater(() -> labelEstado.setText(mensaje));
     }
 
-    // **Método para incrementar el tiempo global correctamente en la CPU**
     private void incrementarTiempoGlobalSimulacion() {
         Planificador planificador = so.getPlanificador();
-        if (planificador instanceof HRRN) { // Si el planificador es HRRN, incrementa su tiempo global.
+        if (planificador instanceof HRRN) {
             HRRN hrrnPlanificador = (HRRN) planificador;
             hrrnPlanificador.incrementarTiempoGlobal();
         }
-        // Si tuvieras otros planificadores que necesitan tiempo global, podrías gestionarlo aquí.
-        // O, mejor aún, gestiona tiempoGlobal de forma centralizada en SistemaOperativo si es posible.
+        // Aquí se podrían añadir otros planificadores que usen tiempo global si fuera necesario
     }
 }

@@ -38,7 +38,7 @@ public class Proceso {
             }
         }
     }
-    
+
     public int getInstruccionesEjecutadas() {
         return totalInstrucciones - instruccionesRestantes;
     }
@@ -50,7 +50,7 @@ public class Proceso {
      */
     public boolean debeBloquearse() {
         System.out.println("DEBE BLOQUEARSE");
-        return pcb.debeBloquearse() ;
+        return pcb.debeBloquearse();
     }
 
     public PCB getPCB() {
@@ -60,8 +60,8 @@ public class Proceso {
     public void setInstruccionesRestantes(int instruccionesRestantes) {
         this.instruccionesRestantes = instruccionesRestantes;
     }
-    
-     public int getTiempoRestante() {
+
+    public int getTiempoRestante() {
         return totalInstrucciones - getInstruccionesEjecutadas();
     }
 
@@ -76,8 +76,11 @@ public class Proceso {
     public boolean estaTerminado() {
         return terminado;
     }
-    
-    
+
+    // **Aquí he añadido el método getNombre()**
+    public String getNombre() {
+        return pcb.getNombre();
+    }
 
     @Override
     public String toString() {

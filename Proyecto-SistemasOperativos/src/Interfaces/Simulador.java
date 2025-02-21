@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
@@ -37,6 +38,7 @@ public class Simulador extends javax.swing.JFrame {
     private Queue<Proceso> colaTerminados = new Queue<>();
     private SistemaOperativo sistemaOperativo;
     private JLabel[] estadosCPU;
+
     private DefaultTableModel modeloTablaListos = new DefaultTableModel(
             new Object[][]{}, new String[]{"Id", "Nombre", "Estado", "PC", "MAR"}
     );
@@ -48,7 +50,7 @@ public class Simulador extends javax.swing.JFrame {
     private DefaultTableModel modeloTablaTerminados = new DefaultTableModel(
             new Object[][]{}, new String[]{"Id", "Nombre", "Estado", "PC", "MAR"}
     );
-    
+
     public Simulador() {
         initComponents();
         setTitle("Simulador de planificacion de procesos");
@@ -76,7 +78,6 @@ public class Simulador extends javax.swing.JFrame {
         this.colaListos = colaListos;
     }
 
-       
     public void actualizarTablas() {
         actualizarTabla(colaListos, modeloTablaListos);
         actualizarTabla(colaBloqueados, modeloTablaBloqueados);
@@ -85,8 +86,10 @@ public class Simulador extends javax.swing.JFrame {
 
     private void actualizarTabla(Queue<Proceso> cola, DefaultTableModel modelo) {
         modelo.setRowCount(0);
-        
-        if (cola.isEmpty()) return; 
+
+        if (cola.isEmpty()) {
+            return;
+        }
         Queue<Proceso> copiaCola = new Queue<>();
 
         // Recorremos la cola sin modificarla
@@ -116,39 +119,38 @@ public class Simulador extends javax.swing.JFrame {
         }
     }
 
-
     public void actualizarEstadoCPU(int idCPU, Proceso proceso) {
         SwingUtilities.invokeLater(() -> { // Asegurar actualización en el hilo de la UI
             if (proceso == null) {
                 limpiarEstadoCPU(idCPU);
                 return;
             }
-            
+
             if (idCPU == 1) {
                 estCPU1.setText("Ejecutando");
-                idP1.setText("ID: "+String.valueOf(proceso.getPCB().getId()));
-                nombreP1.setText("Nombre: "+proceso.getPCB().getNombre());
+                idP1.setText("ID: " + String.valueOf(proceso.getPCB().getId()));
+                nombreP1.setText("Nombre: " + proceso.getPCB().getNombre());
                 statusP1.setText("Estatus: " + proceso.getPCB().getEstado().toString());
-                pcP1.setText("PC: "+ String.valueOf(proceso.getPCB().getPc()));
-                marP1.setText("MAR: "+String.valueOf(proceso.getPCB().getMar()));
+                pcP1.setText("PC: " + String.valueOf(proceso.getPCB().getPc()));
+                marP1.setText("MAR: " + String.valueOf(proceso.getPCB().getMar()));
             } else if (idCPU == 2) {
                 estCPU2.setText("Ejecutando");
-                idP2.setText("ID: " +String.valueOf(proceso.getPCB().getId()));
+                idP2.setText("ID: " + String.valueOf(proceso.getPCB().getId()));
                 nombreP2.setText("Nombre: " + proceso.getPCB().getNombre());
-                statusP2.setText("Estatus: " +proceso.getPCB().getEstado().toString());
-                pcP2.setText("PC: "+String.valueOf(proceso.getPCB().getPc()));
-                marP2.setText("MAR: "+String.valueOf(proceso.getPCB().getMar()));
+                statusP2.setText("Estatus: " + proceso.getPCB().getEstado().toString());
+                pcP2.setText("PC: " + String.valueOf(proceso.getPCB().getPc()));
+                marP2.setText("MAR: " + String.valueOf(proceso.getPCB().getMar()));
             } else if (idCPU == 3) {
                 estCPU3.setText("Ejecutando");
                 idP3.setText("ID: " + String.valueOf(proceso.getPCB().getId()));
-                nombreP3.setText("Nombre: " +proceso.getPCB().getNombre());
-                statusP3.setText("Estatus: " +proceso.getPCB().getEstado().toString());
-                pcP3.setText("PC: "+String.valueOf(proceso.getPCB().getPc()));
-                marP3.setText("MAR: "+String.valueOf(proceso.getPCB().getMar()));
+                nombreP3.setText("Nombre: " + proceso.getPCB().getNombre());
+                statusP3.setText("Estatus: " + proceso.getPCB().getEstado().toString());
+                pcP3.setText("PC: " + String.valueOf(proceso.getPCB().getPc()));
+                marP3.setText("MAR: " + String.valueOf(proceso.getPCB().getMar()));
             }
         });
     }
-    
+
     // Método para limpiar los labels cuando un CPU queda sin proceso
     public void limpiarEstadoCPU(int idCPU) {
         SwingUtilities.invokeLater(() -> {
@@ -176,7 +178,6 @@ public class Simulador extends javax.swing.JFrame {
             }
         });
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -218,9 +219,9 @@ public class Simulador extends javax.swing.JFrame {
         cpus2 = new javax.swing.JRadioButton();
         cpus3 = new javax.swing.JRadioButton();
         jLabel3 = new javax.swing.JLabel();
-        duracionCE = new javax.swing.JSpinner();
         jComboBox1 = new javax.swing.JComboBox<>();
         botonSaveconfig = new javax.swing.JButton();
+        duracionCE = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         cpussoo = new javax.swing.JLabel();
         ciclosdereloj = new javax.swing.JLabel();
@@ -538,8 +539,6 @@ public class Simulador extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
         jLabel3.setText("Duración del ciclo de ejecución:");
 
-        duracionCE.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-
         jComboBox1.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "ms", "s" }));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
@@ -555,6 +554,12 @@ public class Simulador extends javax.swing.JFrame {
         botonSaveconfig.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonSaveconfigActionPerformed(evt);
+            }
+        });
+
+        duracionCE.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                duracionCEActionPerformed(evt);
             }
         });
 
@@ -580,8 +585,8 @@ public class Simulador extends javax.swing.JFrame {
                                 .addComponent(jLabel1))
                             .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(40, 40, 40)
-                        .addComponent(duracionCE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(32, 32, 32)
+                        .addComponent(duracionCE, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -606,8 +611,8 @@ public class Simulador extends javax.swing.JFrame {
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(duracionCE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(duracionCE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(botonSaveconfig)
                 .addContainerGap(9, Short.MAX_VALUE))
@@ -1038,7 +1043,49 @@ public class Simulador extends javax.swing.JFrame {
     }//GEN-LAST:event_cpus2ActionPerformed
 
     private void algoritmoPlanificacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_algoritmoPlanificacionActionPerformed
-        
+
+        // Obtener el algoritmo seleccionado
+        String algoritmo = (String) algoritmoPlanificacion.getSelectedItem();
+
+        // Crear el nuevo planificador según el algoritmo seleccionado
+        Planificador nuevoPlanificador;
+        switch (algoritmo) {
+            case "FCFS":
+                nuevoPlanificador = new FCFS();
+                break;
+            case "SJF":
+                nuevoPlanificador = new SJF();
+                break;
+            case "Round Robin":
+                nuevoPlanificador = new RoundRobin();
+                break;
+            case "HRRN":
+                nuevoPlanificador = new HRRN();
+                break;
+            case "SRT":
+                nuevoPlanificador = new SRT();
+                break;
+            default:
+                JOptionPane.showMessageDialog(Simulador.this, "Algoritmo no soportado."); // Usar Simulador.this para referenciar la ventana principal
+                return;
+        }
+
+        // Cambiar el planificador en el sistema operativo
+        if (sistemaOperativo != null) {
+            sistemaOperativo.setPlanificador(nuevoPlanificador);
+        }
+
+        // Reordenar la cola de procesos según el nuevo planificador
+        if (sistemaOperativo != null && sistemaOperativo.getPlanificador().getColaListos() != null) {
+            
+            sistemaOperativo.getPlanificador().reordenarCola(); // Asegúrate de tener este método implementado en cada planificador
+            sistemaOperativo.getSimulador().setColaListos(sistemaOperativo.getPlanificador().getColaListos()); // Asumiendo que 'setColaListos' existe en Simulador
+        }
+
+        // Actualizar el estado de la interfaz gráfica (opcional)
+        algoritmoPlan.setText("Algoritmo Actual: " + algoritmo);
+    
+
     }//GEN-LAST:event_algoritmoPlanificacionActionPerformed
 
     private void crearProcesoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearProcesoActionPerformed
@@ -1072,25 +1119,25 @@ public class Simulador extends javax.swing.JFrame {
     }//GEN-LAST:event_cantInstruccionesActionPerformed
 
     private void cargarProcesoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargarProcesoActionPerformed
-        
-            // Leer la configuración del simulador desde configuracion.txt
-    try (BufferedReader br = new BufferedReader(new FileReader("configuracion.txt"))) {
-        String linea = br.readLine();
-        if (linea != null) {
-            String[] config = linea.split(",");
-            algoritmoPlanificacion.setSelectedItem(config[0]); // Algoritmo
-            if (config[1].equals("2")) {
-                cpus2.setSelected(true);
-            } else {
-                cpus3.setSelected(true);
+
+        // Leer la configuración del simulador desde configuracion.txt
+        try (BufferedReader br = new BufferedReader(new FileReader("configuracion.txt"))) {
+            String linea = br.readLine();
+            if (linea != null) {
+                String[] config = linea.split(",");
+                algoritmoPlanificacion.setSelectedItem(config[0]); // Algoritmo
+                if (config[1].equals("2")) {
+                    cpus2.setSelected(true);
+                } else {
+                    cpus3.setSelected(true);
+                }
+                duracionCE.setText(config[2]); // Duración
+                jComboBox1.setSelectedItem(config[3].equals("true") ? "ms" : "s"); // Unidad
             }
-            duracionCE.setValue(Integer.parseInt(config[2])); // Duración
-            jComboBox1.setSelectedItem(config[3].equals("true") ? "ms" : "s"); // Unidad
+        } catch (IOException ex) {
+            System.out.println("No se encontró el archivo de configuración.");
         }
-    } catch (IOException ex) {
-        System.out.println("No se encontró el archivo de configuración.");
-    }
-    
+
         try (BufferedReader br = new BufferedReader(new FileReader(rutaArchivo))) {
             String linea;
             while ((linea = br.readLine()) != null) {
@@ -1140,7 +1187,7 @@ public class Simulador extends javax.swing.JFrame {
     private void botonSaveconfigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonSaveconfigActionPerformed
         String algoritmo = (String) algoritmoPlanificacion.getSelectedItem();
         int numeroCPUs = cpus2.isSelected() ? 2 : 3;
-        int duracion = (int) duracionCE.getValue();
+        int duracion = Integer.valueOf(duracionCE.getText());
         boolean enMilisegundos = jComboBox1.getSelectedItem().equals("ms");
         int duracionMs = enMilisegundos ? duracion : duracion * 1000;
 
@@ -1148,11 +1195,11 @@ public class Simulador extends javax.swing.JFrame {
         cpusAct.setText("CPUs Activos: " + numeroCPUs);
 
         // Guardar la configuración en el archivo usando la clase LectorEscritorTxt
-            String rutaConfig = "configuracion.txt";
-            String configuracion = algoritmo + "," + numeroCPUs + "," + duracion + "," + enMilisegundos;
+        String rutaConfig = "configuracion.txt";
+        String configuracion = algoritmo + "," + numeroCPUs + "," + duracion + "," + enMilisegundos;
 
-            lector.escribirArchivo(rutaConfig, configuracion, false) ;
-        
+        lector.escribirArchivo(rutaConfig, configuracion, false);
+
         // Crear el planificador basado en el algoritmo seleccionado
         Planificador planificador;
         switch (algoritmo) {
@@ -1170,7 +1217,7 @@ public class Simulador extends javax.swing.JFrame {
                 break;
             case "SRT":
                 planificador = new SRT();
-                break;   
+                break;
             default:
                 JOptionPane.showMessageDialog(this, "Algoritmo no soportado.");
                 return;
@@ -1182,8 +1229,7 @@ public class Simulador extends javax.swing.JFrame {
         sistemaOperativo.setSimulador(this);
         sistemaOperativo.setColaBloqueados(colaBloqueados);
         sistemaOperativo.setColaTerminados(colaTerminados);
-        
-     
+
         if (!colaListos.isEmpty()) {
             new Thread(() -> { // Ejecutar en un hilo separado
                 sistemaOperativo.iniciarCPUs();
@@ -1196,11 +1242,11 @@ public class Simulador extends javax.swing.JFrame {
     }//GEN-LAST:event_botonSaveconfigActionPerformed
 
     private void cargarProceso1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargarProceso1ActionPerformed
-        Random random = new Random();   
+        Random random = new Random();
         for (int i = 0; i < 20; i++) {
             // Generar valores aleatorios para cada atributo del proceso
-            String nombre = "PROCESO-" + i; 
-            int instrucciones = random.nextInt(10) + 5; 
+            String nombre = "PROCESO-" + i;
+            int instrucciones = random.nextInt(10) + 5;
             boolean esCPUBound = random.nextBoolean(); // CPU-bound o I/O-bound
 
             Proceso proceso;
@@ -1220,25 +1266,48 @@ public class Simulador extends javax.swing.JFrame {
             colaListos.enqueue(proceso);
             agregarProceso(proceso);
         }
-                // Leer la configuración del simulador desde configuracion.txt
-    try (BufferedReader br = new BufferedReader(new FileReader("configuracion.txt"))) {
-        String linea = br.readLine();
-        if (linea != null) {
-            String[] config = linea.split(",");
-            algoritmoPlanificacion.setSelectedItem(config[0]); // Algoritmo
-            if (config[1].equals("2")) {
-                cpus2.setSelected(true);
-            } else {
-                cpus3.setSelected(true);
+        // Leer la configuración del simulador desde configuracion.txt
+        try (BufferedReader br = new BufferedReader(new FileReader("configuracion.txt"))) {
+            String linea = br.readLine();
+            if (linea != null) {
+                String[] config = linea.split(",");
+                algoritmoPlanificacion.setSelectedItem(config[0]); // Algoritmo
+                if (config[1].equals("2")) {
+                    cpus2.setSelected(true);
+                } else {
+                    cpus3.setSelected(true);
+                }
+                String valorDuracion = config[2]; // Obtén el valor como String
+                int duracion = Integer.parseInt(valorDuracion); // Convierte a int
+                duracionCE.setText(Integer.toString(duracion));
+                jComboBox1.setSelectedItem(config[3].equals("true") ? "ms" : "s"); // Unidad
             }
-            duracionCE.setValue(Integer.parseInt(config[2])); // Duración
-            jComboBox1.setSelectedItem(config[3].equals("true") ? "ms" : "s"); // Unidad
+        } catch (IOException ex) {
+            System.out.println("No se encontró el archivo de configuración.");
         }
-    } catch (IOException ex) {
-        System.out.println("No se encontró el archivo de configuración.");
-    }
-    
+
     }//GEN-LAST:event_cargarProceso1ActionPerformed
+
+    private void duracionCEActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_duracionCEActionPerformed
+        try {
+            // Obtener el valor del JTextField
+            int duracion = Integer.parseInt(duracionCE.getText().trim());
+
+            // Comprobar la unidad seleccionada
+            boolean enMilisegundos = jComboBox1.getSelectedItem().equals("ms");
+            int duracionMs = enMilisegundos ? duracion : duracion * 1000;
+
+            // Establecer la duración en el sistema operativo
+            sistemaOperativo.setDuracionCiclo(duracionMs);
+
+            // Opcional: mostrar un mensaje de confirmación
+            JOptionPane.showMessageDialog(this, "Duración del ciclo actualizada a: " + duracionMs + " ms");
+        } catch (NumberFormatException e) {
+            // Manejo de errores si la entrada no es un número válido
+            JOptionPane.showMessageDialog(this, "Por favor, ingresa un número válido para la duración.");
+        }
+
+    }//GEN-LAST:event_duracionCEActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1295,7 +1364,7 @@ public class Simulador extends javax.swing.JFrame {
     private javax.swing.JLabel cpusAct1;
     private javax.swing.JLabel cpussoo;
     private javax.swing.JButton crearProceso;
-    private javax.swing.JSpinner duracionCE;
+    private javax.swing.JTextField duracionCE;
     private javax.swing.JLabel enEjP1;
     private javax.swing.JLabel enEjP2;
     private javax.swing.JLabel enEjP3;
