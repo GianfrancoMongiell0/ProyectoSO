@@ -11,7 +11,7 @@ import planificacion.Planificador;
 
 public class SistemaOperativo {
 
-    private final Planificador planificador;
+    private  Planificador planificador;
     private Queue<Proceso> colaBloqueados;
     private Queue<Proceso> colaTerminados;
     private final Lista<CPU> cpus;
@@ -150,9 +150,12 @@ public class SistemaOperativo {
     public Planificador getPlanificador() {
         return planificador;
     }
-   
 
-    
+    public void setPlanificador(Planificador planificador) {
+        this.planificador = planificador;
+    }
+   
+        
     private void actualizarGUI() {
         if (simulador != null) {
             System.out.println("Actualizando GUI...");

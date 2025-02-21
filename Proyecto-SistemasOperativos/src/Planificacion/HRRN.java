@@ -2,6 +2,7 @@ package planificacion;
 
 import Clases.Proceso;
 import Estructuras.Lista;
+import Estructuras.Queue;
 import java.util.concurrent.Semaphore;
 
 public class HRRN extends Planificador {
@@ -64,4 +65,51 @@ public class HRRN extends Planificador {
     public boolean estaVacio() {
         return colaListos.isEmpty();
     }
+    
+    
+    
+    @Override
+    public void reordenarCola() {
+        try {
+            mutex.acquire();
+            Queue<Proceso> colaTemporal = new Queue<>();
+
+            // Reorganizar la cola según la tasa de respuesta
+            while (!colaListos.isEmpty()) {
+                Proceso p = colaListos.dequeue();
+                double ratio = calcularResponseRatio(p);
+                
+                // Insertar en la cola temporal en el lugar adecuado
+                boolean insertado = false;
+                while (!colaTemporal.isEmpty()) {
+                    Proceso siguiente = colaTemporal.dequeue();
+                    // Comparar ratios
+                    if (calcularResponseRatio(siguiente) < ratio) {
+                        colaTemporal.enqueue(p); // Insertar el proceso actual
+                        colaTemporal.enqueue(siguiente); // Encolar el siguiente
+                        insertado = true;
+                        break;
+                    }
+                    colaTemporal.enqueue(siguiente); // Reencolar el siguiente
+                }
+                
+                // Si no se insertó, agregar al final
+                if (!insertado) {
+                    colaTemporal.enqueue(p);
+                }
+            }
+
+            // Volver a encolar los procesos en la cola original
+            while (!colaTemporal.isEmpty()) {
+                colaListos.enqueue(colaTemporal.dequeue());
+            }
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } finally {
+            mutex.release();
+        }
+        simulador.actualizarTablas();
+    }
+    
 }
