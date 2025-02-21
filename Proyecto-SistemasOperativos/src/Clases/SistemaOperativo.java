@@ -21,8 +21,8 @@ public class SistemaOperativo {
 
     public SistemaOperativo(Planificador planificador, int numCPUs, Queue<Proceso> colaListos, JLabel[] labelsEstadoCPUs) {
         this.planificador = planificador;
-        this.colaBloqueados = new Queue<>(); // **INICIALIZACIÓN CORRECTA - ¡DESCOMENTADO!**
-        this.colaTerminados = new Queue<>(); // **INICIALIZACIÓN CORRECTA - ¡DESCOMENTADO!**
+        this.colaBloqueados = new Queue<>(); 
+        this.colaTerminados = new Queue<>(); 
         this.cpus = new Lista<>();
         this.enEjecucion = true;
         this.labelsEstadoCPUs = labelsEstadoCPUs;
@@ -47,7 +47,7 @@ public class SistemaOperativo {
     }
 
     public synchronized void agregarProceso(Proceso proceso) {
-        System.out.println("SO: Intentando agregar proceso " + proceso.getNombre()); // Usar proceso.getNombre() si está disponible
+        System.out.println("SO: Intentando agregar proceso " + proceso.getNombre()); 
 
         if (!proceso.estaTerminado()) {
             planificador.agregarProceso(proceso);
@@ -64,16 +64,16 @@ public class SistemaOperativo {
     public synchronized Proceso obtenerSiguienteProceso() {
         Proceso p = planificador.siguienteProceso();
         if (p == null) {
-            // System.out.println("SO: No hay procesos en la cola."); // Menos verboso si es normal que no haya procesos
+            // System.out.println("SO: No hay procesos en la cola."); 
         } else {
-            System.out.println("SO: Asignando proceso " + p.getNombre()); // Usar proceso.getNombre() si está disponible
+            System.out.println("SO: Asignando proceso " + p.getNombre());
             actualizarGUI();
         }
         return p;
     }
 
     public synchronized void moverAColaBloqueados(Proceso proceso) {
-        System.out.println("SO: Proceso " + proceso.getNombre() + " movido a Bloqueados"); // Usar proceso.getNombre() si está disponible
+        System.out.println("SO: Proceso " + proceso.getNombre() + " movido a Bloqueados"); 
         proceso.getPCB().setEstado(PCB.Estado.BLOCKED);
         colaBloqueados.enqueue(proceso);
         if (simulador != null) {
@@ -84,7 +84,7 @@ public class SistemaOperativo {
     }
 
     public synchronized void moverAColaTerminados(Proceso proceso) {
-        System.out.println("SO: Proceso " + proceso.getNombre() + " movido a Terminados"); // Usar proceso.getNombre() si está disponible
+        System.out.println("SO: Proceso " + proceso.getNombre() + " movido a Terminados"); 
         proceso.getPCB().setEstado(PCB.Estado.TERMINATED);
         colaTerminados.enqueue(proceso);
         if (simulador != null) {
@@ -107,10 +107,10 @@ public class SistemaOperativo {
         try {
             Thread.sleep(p.getPCB().getCiclosCompletarExcepcion() * duracionCiclo);
             synchronized (this) {
-                if (!colaBloqueados.isEmpty()) { // Seguridad adicional: verificar que la cola no esté vacía antes de dequeue
+                if (!colaBloqueados.isEmpty()) { 
                     colaBloqueados.dequeue(); // Eliminar de bloqueados
                     p.getPCB().reiniciarContadorBloqueo();
-                    if (!p.estaTerminado()) { // Verificar nuevamente si el proceso no ha terminado (por si acaso)
+                    if (!p.estaTerminado()) { // Verificar nuevamente si el proceso no ha terminado 
                         p.getPCB().setEsIOBound(false);
                         p.getPCB().setEstado(PCB.Estado.READY);
                         agregarProceso(p); // Volver a la cola de listos

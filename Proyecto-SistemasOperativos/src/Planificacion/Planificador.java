@@ -11,18 +11,18 @@ public abstract class Planificador {
     protected Queue<Proceso> colaListos = new Queue<>();
     protected Semaphore mutex = new Semaphore(1); // Mutex para proteger la cola de listos
     protected int quantum; // Quantum para políticas como Round Robin
-    protected Simulador simulador; // Referencia al simulador (opcional, para GUI)
+    protected Simulador simulador; // Referencia al simulador 
 
     public Planificador() {
         this.tiempoGlobal = 0; // Inicializar tiempoGlobal a 0
-        this.quantum = -1; // Valor por defecto para quantum (no aplicable a todos los planificadores)
+        this.quantum = -1; // Valor por defecto para quantum 
     }
 
     public void setColaListos(Queue<Proceso> colaListos) {
         this.colaListos = colaListos;
     }
 
-    // Métodos abstractos que deben implementar las subclases concretas
+    // Métodos abstractos 
     public abstract Proceso siguienteProceso();
 
     public abstract void agregarProceso(Proceso p);

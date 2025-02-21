@@ -5,10 +5,6 @@ import Estructuras.Queue;
 
 public class SJF extends Planificador {
 
-    public SJF() {
-        // No se necesita inicialización específica para SJF en este momento, se usa el constructor de Planificador
-    }
-
     @Override
     public Proceso siguienteProceso() {
         try {
@@ -31,7 +27,7 @@ public class SJF extends Planificador {
             for (int i = 0; i < lengthColaListos; i++) {
                 Proceso procesoActual = colaListos.dequeue();
 
-                // Comparar por tiempo restante (SJF no preemptivo usa tiempo total inicialmente estimado, aquí usamos restante para consistencia con SRT)
+                // Comparar por tiempo restante
                 if (procesoActual.getInstruccionesRestantes() < mejorProcesoSJF.getInstruccionesRestantes()) {
                     colaAuxiliarSJF.enqueue(mejorProcesoSJF); // Re-encolar el anterior 'mejor' proceso
                     mejorProcesoSJF = procesoActual; // El actual es ahora el mejor (más corto)
@@ -46,7 +42,7 @@ public class SJF extends Planificador {
                 colaListos.enqueue(colaAuxiliarSJF.dequeue());
             }
 
-            return mejorProcesoSJF; // Retornar el proceso SJF (Shortest Job First)
+            return mejorProcesoSJF; // Retornar el proceso SJF 
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -73,6 +69,5 @@ public class SJF extends Planificador {
         return colaListos.isEmpty();
     }
 
-    // reordenarCola() se hereda de Planificador y tiene una implementación por defecto vacía,
-    // SJF NO necesita una implementación específica de reordenarCola() en este diseño no preemptivo.
+  
 }

@@ -61,7 +61,7 @@ public class SRT extends Planificador {
         try {
             mutex.acquire();
             colaListos.enqueue(p); // Añadir proceso a la cola de listos
-            reordenarCola(); // **IMPORTANTE para SRT: Reordenar la cola después de añadir un nuevo proceso (para preemption y visualización)**
+            reordenarCola(); 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {

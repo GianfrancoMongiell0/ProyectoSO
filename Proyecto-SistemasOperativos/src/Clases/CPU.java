@@ -1,6 +1,6 @@
 package Clases;
 
-import planificacion.HRRN; // Import para HRRN (si se usa tiempoGlobal de HRRN)
+import planificacion.HRRN; 
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import planificacion.Planificador;
@@ -208,6 +208,6 @@ public class CPU extends Thread {
             HRRN hrrnPlanificador = (HRRN) planificador;
             hrrnPlanificador.incrementarTiempoGlobal();
         }
-        // Aquí se podrían añadir otros planificadores que usen tiempo global si fuera necesario
+        
     }
 }

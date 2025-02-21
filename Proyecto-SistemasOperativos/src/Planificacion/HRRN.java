@@ -20,12 +20,11 @@ public class HRRN extends Planificador {
             double maxRatio = -1;
             Proceso seleccionado = null;
             Queue<Proceso> colaAuxiliar = new Queue<>(); // Cola auxiliar temporal
-
+            
             int lengthColaListos = colaListos.getLength();
             for (int i = 0; i < lengthColaListos; i++) {
                 Proceso procesoActual = colaListos.dequeue(); // Sacar el proceso del frente de la cola
                 double ratio = calcularResponseRatio(procesoActual); // Calcular el ratio de respuesta
-
                 if (ratio > maxRatio) {
                     maxRatio = ratio;
                     seleccionado = procesoActual; // Actualizar el proceso seleccionado si tiene un ratio mayor
@@ -69,7 +68,7 @@ public class HRRN extends Planificador {
         int tiempoServicio = p.getTotalInstrucciones(); // Usar getTotalInstrucciones para tiempo de servicio
         // Evitar división por cero si tiempoServicio es 0 (aunque no debería pasar en este contexto)
         if (tiempoServicio <= 0) {
-            return 1.0; // Ratio mínimo si el tiempo de servicio es cero o negativo (valor por defecto razonable)
+            return 1.0; // Ratio mínimo si el tiempo de servicio es cero o negativo 
         }
         return (double) (tiempoEspera + tiempoServicio) / tiempoServicio; // Fórmula del Response Ratio
     }
@@ -79,8 +78,5 @@ public class HRRN extends Planificador {
         return colaListos.isEmpty();
     }
 
-    // Ya no se necesita tiempoGlobal en HRRN, se usa el tiempoGlobal centralizado en Planificador/SistemaOperativo (opcional refactorización)
-    // Los métodos getTiempoGlobal, setTiempoGlobal e incrementarTiempoGlobal se heredan de Planificador y pueden ser usados directamente.
-    // reordenarCola() se hereda de Planificador y tiene una implementación por defecto vacía,
-    // HRRN NO necesita una implementación específica de reordenarCola() en este diseño.
+    
 }

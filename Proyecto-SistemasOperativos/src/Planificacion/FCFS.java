@@ -1,7 +1,6 @@
 package planificacion;
 
 import Clases.Proceso;
-import Estructuras.Queue;
 import java.util.concurrent.Semaphore;
 
 public class FCFS extends Planificador {

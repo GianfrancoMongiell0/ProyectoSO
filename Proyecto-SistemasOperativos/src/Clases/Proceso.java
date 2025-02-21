@@ -77,7 +77,7 @@ public class Proceso {
         return terminado;
     }
 
-    // **Aquí he añadido el método getNombre()**
+    
     public String getNombre() {
         return pcb.getNombre();
     }

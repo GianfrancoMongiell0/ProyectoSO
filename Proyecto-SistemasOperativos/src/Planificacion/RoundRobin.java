@@ -1,8 +1,6 @@
 package planificacion;
 
 import Clases.Proceso;
-import Estructuras.Queue;
-import java.util.concurrent.Semaphore;
 
 public class RoundRobin extends Planificador {
     public RoundRobin() {

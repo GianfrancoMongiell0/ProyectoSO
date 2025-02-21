@@ -1,1 +1,1 @@
-Round Robin,2,5,false
+HRRN,2,4,false
