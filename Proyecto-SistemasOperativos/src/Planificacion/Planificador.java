@@ -29,7 +29,7 @@ public abstract class Planificador {
        
        
     public void reordenarCola() {
-     
+    }
 
     public Queue<Proceso> getColaListos() {
         return colaListos;

@@ -1,1 +1,1 @@
-SRT,2,3,false
+FCFS,2,1,false

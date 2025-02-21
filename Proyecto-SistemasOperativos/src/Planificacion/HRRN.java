@@ -134,6 +134,7 @@ public class HRRN extends Planificador {
         this.tiempoGlobal = tiempoGlobal;
     }
 
+    @Override
     public void incrementarTiempoGlobal() {
         this.tiempoGlobal++;
     }
