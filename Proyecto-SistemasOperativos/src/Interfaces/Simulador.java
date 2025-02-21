@@ -4,23 +4,17 @@
  */
 package Interfaces;
 
-import Clases.CPU;
 import Clases.Proceso;
 import Clases.SistemaOperativo;
-import Estructuras.Lista;
 import Estructuras.Nodo;
 import Estructuras.Queue;
 import Utils.LectorEscritorTxt;
-import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JSpinner;
-import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import planificacion.*;
