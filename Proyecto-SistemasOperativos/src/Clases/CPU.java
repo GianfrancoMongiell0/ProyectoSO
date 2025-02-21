@@ -4,21 +4,23 @@ import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
 public class CPU extends Thread {
+    private int id;
+    private SistemaOperativo so;
+    private Proceso procesoEnEjecucion;
+    private JLabel labelEstado;
+    private int quantumRestante;
 
-    private final SistemaOperativo so;
-    public final int id;
-    private Proceso procesoEnEjecucion; // Almacenar el proceso en ejecución
-    private JLabel labelEstado; 
-    
-    public CPU(SistemaOperativo so, int id, JLabel labelEstado) {
-        this.so = so;
+    public CPU(int id, SistemaOperativo so, JLabel labelEstado) {
         this.id = id;
+        this.so = so;
         this.labelEstado = labelEstado;
+        this.procesoEnEjecucion = null;
     }
-     // Método para obtener el proceso que está siendo ejecutado en la CPU
-    public Proceso obtenerProcesoEnEjecucion() {
+    
+     public Proceso obtenerProcesoEnEjecucion() {
         return procesoEnEjecucion;
     }
+
     @Override
     public void run() {
         System.out.println("CPU " + id + " ha iniciado.");
@@ -31,45 +33,75 @@ public class CPU extends Thread {
                     Thread.sleep(100); // Espera no activa
                     continue;
                 }
-                
-                proceso.getPCB().setEstado(PCB.Estado.RUNNING); // Establecer estado a RUNNING
 
-                // Asignar el proceso a la CPU
+                proceso.getPCB().setEstado(PCB.Estado.RUNNING);
                 procesoEnEjecucion = proceso;
-             
-                // Bucle para ejecutar instrucciones hasta que el proceso termine o se bloquee
-             while (!proceso.estaTerminado() && !proceso.debeBloquearse()) {
-                 actualizarEstado("Ejecutando: Programa de Usuario");
+                String politica = so.getPlanificador().getClass().getSimpleName();
 
-                 proceso.ejecutarInstruccion();
-                 System.out.println("CPU " + id + " ejecutando: " + proceso.getPCB().toString());
+                switch (politica) {
+                    case "RoundRobin":
+                        quantumRestante = so.getPlanificador().getQuantum();
+                        while (proceso.getInstruccionesRestantes() > 0) {
+                            Thread.sleep(so.getDuracionCiclo());
 
-                 try {
-                     Thread.sleep(so.getDuracionCiclo()); // Simular duración de ciclo
-                 } catch (InterruptedException e) {
-                     Thread.currentThread().interrupt();
-                 }
-             }
+                            proceso.ejecutarInstruccion();
+                          //  this.setProceso(proceso);
 
-             // Después de terminar o bloquearse, manejar el proceso
-             if (proceso.estaTerminado()) {
-                actualizarEstado("Ejecutando:Sistema Operativo");
-                 so.moverAColaTerminados(proceso);
-             } else if (proceso.debeBloquearse()) {
-                 actualizarEstado("Ejecutando:Sistema Operativo");
-                 so.moverAColaBloqueados(proceso);
-             } else {
-                 actualizarEstado("Ejecutando:Sistema Operativo");
-                 so.agregarProceso(proceso); // Si no ha terminado ni bloqueado
-             }
+                            if (proceso.debeBloquearse()) {
+                                proceso.getPCB().setEstado(PCB.Estado.BLOCKED);
+                                so.moverAColaBloqueados(proceso);
+                                this.liberarProceso();
+                                break;
+                            }
 
-             procesoEnEjecucion = null; // La CPU está libre
-         } catch (InterruptedException e) {
-             Thread.currentThread().interrupt();
-         }
-}
+                            quantumRestante--;
+
+                            if (proceso.estaTerminado()) {
+                                proceso.getPCB().setEstado(PCB.Estado.TERMINATED);
+                                so.moverAColaTerminados(proceso);
+                                this.liberarProceso();
+                                break;
+                            }
+
+                            if (quantumRestante <= 0) {
+                                proceso.getPCB().setEstado(PCB.Estado.READY);
+                                so.agregarProceso(proceso);
+                                this.liberarProceso();
+                                break;
+                            }
+                        }
+                        break;
+                    default:
+                        ejecutarProceso(proceso);
+                        break;
+                }
+                procesoEnEjecucion = null;
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
-    
+
+    private void ejecutarProceso(Proceso proceso) throws InterruptedException {
+        while (!proceso.estaTerminado() && !proceso.debeBloquearse()) {
+            actualizarEstado("Ejecutando: Programa de Usuario");
+            proceso.ejecutarInstruccion();
+            Thread.sleep(so.getDuracionCiclo());
+        }
+        if (proceso.estaTerminado()) {
+            so.moverAColaTerminados(proceso);
+        } else if (proceso.debeBloquearse()) {
+            so.moverAColaBloqueados(proceso);
+        } else {
+            so.agregarProceso(proceso);
+        }
+    }
+
+    private void liberarProceso() {
+        procesoEnEjecucion = null;
+        actualizarEstado("Ejecutando: Sistema Operativo");
+    }
+
     private void actualizarEstado(String mensaje) {
         SwingUtilities.invokeLater(() -> labelEstado.setText(mensaje));
     }

@@ -17,6 +17,10 @@ public abstract class Planificador {
     public abstract void agregarProceso(Proceso p);
     public abstract boolean estaVacio();
 
+    public int getQuantum() {
+        return quantum;
+    }
+    
     public Queue<Proceso> getColaListos() {
         return colaListos;
     }

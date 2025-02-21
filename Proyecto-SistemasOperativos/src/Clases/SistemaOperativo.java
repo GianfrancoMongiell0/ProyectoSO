@@ -32,7 +32,7 @@ public class SistemaOperativo {
         this.planificador.setColaListos(colaListos);
 
         for (int i = 0; i < numCPUs; i++) {
-            cpus.insertLast(new CPU(this, i + 1, labelsEstadoCPUs[i]));
+            cpus.insertLast(new CPU( i + 1,this, labelsEstadoCPUs[i]));
         }
     }
 
@@ -146,6 +146,10 @@ public class SistemaOperativo {
     public Lista<CPU> getCpus() {
         return cpus;
     }
+
+    public Planificador getPlanificador() {
+        return planificador;
+    }
    
 
     
@@ -224,6 +228,7 @@ public class SistemaOperativo {
                     } else {
                         // Si hay un proceso en ejecución, actualizar la interfaz
                         simulador.actualizarEstadoCPU(i + 1, proceso);
+                        
                     }
                 }
             } else {

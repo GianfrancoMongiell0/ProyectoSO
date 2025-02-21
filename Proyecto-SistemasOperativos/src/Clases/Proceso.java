@@ -38,6 +38,10 @@ public class Proceso {
             }
         }
     }
+    
+    public int getInstruccionesEjecutadas() {
+        return totalInstrucciones - instruccionesRestantes;
+    }
 
     /**
      * Determina si el proceso debe bloquearse por una operación de E/S.
