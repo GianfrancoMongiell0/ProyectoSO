@@ -6,6 +6,7 @@ import Estructuras.Queue;
 import java.util.concurrent.Semaphore;
 
 public class SRT extends Planificador {
+
     @Override
     public Proceso siguienteProceso() {
         try {
@@ -14,18 +15,38 @@ public class SRT extends Planificador {
                 return null;
             }
 
-            Proceso mejorProceso = colaListos.dequeue();
-            int length = colaListos.getLength();
-            for (int i = 0; i < length; i++) {
-                Proceso p = colaListos.dequeue();
-                if (p.getInstruccionesRestantes() < mejorProceso.getInstruccionesRestantes()) {
-                    colaListos.enqueue(mejorProceso);
-                    mejorProceso = p;
+            Proceso mejorProceso = null;
+            Queue<Proceso> colaAuxiliarSRT = new Queue<>(); // Cola auxiliar temporal para SRT
+
+            // Inicializar mejorProceso con el primer proceso de la cola y removerlo de colaListos
+            if (!colaListos.isEmpty()) {
+                mejorProceso = colaListos.dequeue();
+            } else {
+                return null; // La cola estaba vacía al inicio, no hay proceso.
+            }
+
+            // Iterar sobre los procesos restantes en la cola de listos:
+            int lengthColaListos = colaListos.getLength(); // Obtener la longitud ANTES de empezar a dequeue
+            for (int i = 0; i < lengthColaListos; i++) {
+                Proceso procesoActual = colaListos.dequeue(); // Sacar el proceso del frente
+
+                // Comparar el tiempo restante con el mejorProceso actual
+                if (procesoActual.getInstruccionesRestantes() < mejorProceso.getInstruccionesRestantes()) {
+                    colaAuxiliarSRT.enqueue(mejorProceso); // El anterior mejorProceso ahora va a la cola auxiliar
+                    mejorProceso = procesoActual; // El proceso actual es ahora el mejor (más corto restante)
                 } else {
-                    colaListos.enqueue(p);
+                    colaAuxiliarSRT.enqueue(procesoActual); // El proceso actual no es más corto, va a la cola auxiliar
                 }
             }
-            return mejorProceso;
+
+            // Re-encolar todos los procesos de la cola auxiliar DE VUELTA a la cola de listos,
+            // EXCEPTO el mejorProceso (que es el que se va a retornar para ejecutar).
+            int lengthColaAuxiliar = colaAuxiliarSRT.getLength();
+            for (int i = 0; i < lengthColaAuxiliar; i++) {
+                colaListos.enqueue(colaAuxiliarSRT.dequeue());
+            }
+
+            return mejorProceso; // Retorna el proceso con el tiempo de ráfaga restante más corto
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

@@ -6,6 +6,8 @@ import Interfaces.Simulador;
 import java.util.concurrent.Semaphore;
 
 public abstract class Planificador {
+
+    protected int tiempoGlobal;
     protected Queue<Proceso> colaListos = new Queue<>();
     protected Semaphore mutex = new Semaphore(1);
     protected int quantum;
@@ -16,18 +18,24 @@ public abstract class Planificador {
     }
 
     public abstract Proceso siguienteProceso();
+
     public abstract void agregarProceso(Proceso p);
+
     public abstract boolean estaVacio();
 
     public int getQuantum() {
         return quantum;
     }
        
+       
+    public void reordenarCola() {
+     
+
     public Queue<Proceso> getColaListos() {
         return colaListos;
     }
-   
-    public void reordenarCola() {
-     
+
+    public void incrementarTiempoGlobal() {
+        tiempoGlobal++;
     }
 }
